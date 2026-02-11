@@ -1,6 +1,7 @@
 ---
 name: nelson
 description: Coordinate agent teams through a 6-step framework with risk-tiered controls and structured output.
+version: "2.0.0"
 ---
 
 # Nelson♦Σ
@@ -12,7 +13,7 @@ description: Coordinate agent teams through a 6-step framework with risk-tiered 
 
 ### Roles
 COORD=coordinator | LEAD=team-lead | REV=reviewer
-XO=integration | PWO=implementation | NO=research(read-only) | MEO=testing | WEO=config/infra | LOGO=docs/deps | COX=standards(read-only)
+Crew roles: see references/roles.md
 
 ### Symbols
 → results-in | ! violation | ? decision | ∅ none | ~ conditional | ✓ required | ✗ forbidden
@@ -21,6 +22,9 @@ XO=integration | PWO=implementation | NO=research(read-only) | MEO=testing | WEO
 ⚓ define | 🚢 compose | ⚔️ plan | 📊 monitor | 🎯 verify | 📜 close
 🟢 Σ₀ | 🟡 Σ₁ | 🟠 Σ₂ | 🔴 Σ₃
 
+### Reference Files
+When a path appears (e.g., `references/stations.md`), Read that file before proceeding. Paths are relative to this skill directory.
+
 ---
 
 ## Ω₁ ⚓ Define
@@ -28,17 +32,13 @@ XO=integration | PWO=implementation | NO=research(read-only) | MEO=testing | WEO
 Define: outcome, metric, deadline (1 sentence each)
 Set: token_budget, reliability_floor, compliance, forbidden_actions
 Scope: in[], out[], stop_criteria[], handoff_artifacts[]
-?no user structure → refs/templates.md#define
+?no user structure → references/templates.md#define
 
 ## Ω₂ 🚢 Compose
 
-Mode ?first match:
-  sequential|coupled|same-files → single-session
-  parallel, COORD-report-only → subagents
-  parallel + cross-coordination → agent-team
-Size: default 1 COORD + 3-6 LEAD; +1 REV if Σ₁+; max 10 team agents
-LEAD → assign unit name from refs/roles.md#units matching task weight
-LEAD → decide crew via refs/roles.md#crew-tree
+Mode ?first match: sequential → single-session | parallel-independent → subagents | parallel+coordination → agent-team
+Size: 1 COORD + 2-7 LEAD; +1 REV if Σ₁+; max 10. Details → references/roles.md
+LEAD → assign unit name + decide crew via references/roles.md
 !Φ check before forming
 
 ## Ω₃ ⚔️ Plan
@@ -47,7 +47,7 @@ Split mission → independent tasks w/ clear deliverables
 Each task: owner, deps, file_ownership(exclusive), station_tier(Σ₀₋₃)
 1 task in-progress per agent unless mission requires multitask
 LEAD tasks: include unit manifest; crew=0 → "LEAD implements directly"
-?structure → refs/templates.md#plan + refs/templates.md#manifest
+?structure → references/templates.md#plan + references/templates.md#manifest
 !Φ check on file assignment + scope
 
 ## Ω₄ 📊 Monitor
@@ -59,25 +59,26 @@ Checkpoints at fixed cadence (15-30 min):
   - Confirm crew have active sub-tasks; flag idle/mismatch
   - Track burn vs token/time budget
   - Re-scope early if drift from mission metric
-?difficulties → refs/damage-control.md
-?structure → refs/templates.md#checkpoint
+?difficulties → references/damage-control.md
+?structure → references/templates.md#checkpoint
 !Φ check if COORD implementing or scope drifting
 
 ## Ω₅ 🎯 Verify
 
-Apply station tier from refs/stations.md
+Apply station tier from references/stations.md
 Evidence required before task=completed:
   - Test/validation output
   - Failure modes + rollback notes
   - REV review for Σ₁+
 Quality triggers: task completion | agent idle w/ unverified output | before final synthesis
-Crew outputs must align w/ role boundaries (refs/roles.md)
+Crew outputs must align w/ role boundaries (references/roles.md)
 !Φ check if tasks lack tier or REV assigned impl
+Completion: all tasks=completed + stop_criteria met + metric achieved → Ω₆
 
 ## Ω₆ 📜 Close
 
 Stop/archive all agent sessions (including crew)
-Produce close log → refs/templates.md#close:
+Produce close log → references/templates.md#close:
   - Decisions + rationale
   - Diffs/artifacts
   - Validation evidence
@@ -110,3 +111,4 @@ Record reusable patterns + failure modes
 - Replace stalled agents over waiting on undefined blockers
 - Keep coordination messages targeted + concise
 - Escalate uncertainty early w/ options + 1 recommendation
+- Allocate ≤15% of token budget to coordination (COORD messages, checkpoints, planning)

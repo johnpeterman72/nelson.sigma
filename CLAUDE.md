@@ -10,10 +10,8 @@ Nelson is a token-efficient Claude Code skill for coordinating agent teams. It u
   references/
     roles.md            — Ρ roles, mode selection, crew tree, unit names
     stations.md         — Σ₀₋₃ risk tiers + controls
-    templates.md        — Τ output templates (define, plan, manifest, checkpoint, review, close)
+    templates.md        — Τ output templates (define, plan, manifest, checkpoint, rescope, review, close)
     damage-control.md   — Δ recovery procedures
-  agents/
-    openai.yaml         — Agent interface definition
 demos/                  — Example applications
 ```
 
@@ -36,7 +34,7 @@ Then invoke `/nelson` in Claude Code.
 
 - Token-efficient: symbolic notation, arrays, compressed shorthand
 - Emojis for user-facing output; symbols for AI-internal logic
-- Markdown for all documentation; YAML for agent interfaces
+- Markdown for all documentation
 - The battleships demo (`demos/battleships/index.html`) uses vanilla HTML/CSS/JS with no dependencies
 
 ## Git workflow

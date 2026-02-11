@@ -6,7 +6,7 @@
   <em>Captain Horatio Nelson — John Francis Rigaud, 1781. Image: Wikimedia Commons</em>
 </p>
 
-A token-efficient Claude Code skill for coordinating agent teams. Nelson♦Σ uses symbolic notation — Greek letter domains, compressed arrays, and shorthand operators — to encode a full agent coordination framework in ~800 tokens (84% smaller than [the original Nelson](https://github.com/harrymunro/nelson)).
+A token-efficient Claude Code skill for coordinating agent teams. Nelson♦Σ uses symbolic notation — Greek letter domains, compressed arrays, and shorthand operators — to encode a full agent coordination framework at a fraction of the token cost of [the original Nelson](https://github.com/harrymunro/nelson).
 
 ## What it does
 
@@ -205,15 +205,13 @@ Anti-patterns checked at every workflow step:
 
 ### Templates (Τ)
 
-Six output templates encoded as field arrays — define, plan, manifest, checkpoint, review, close. The AI fills these structured formats at each workflow step.
+Seven output templates encoded as field arrays — define, plan, manifest, checkpoint, rescope, review, close. The AI fills these structured formats at each workflow step.
 
 ## Skill file structure
 
 ```
 .claude/skills/nelson/
 ├── SKILL.md                    # Legend + Ω₁₋₆ workflow + Φ standing orders + doctrine
-├── agents/
-│   └── openai.yaml             # Agent interface definition
 └── references/
     ├── roles.md                # Ρ roles, mode selection, crew tree, unit names
     ├── stations.md             # Σ₀₋₃ risk tiers + cumulative controls
@@ -221,7 +219,7 @@ Six output templates encoded as field arrays — define, plan, manifest, checkpo
     └── damage-control.md       # Δ recovery procedures
 ```
 
-6 files total. The original Nelson used 30 files — this version consolidates everything through symbolic compression.
+5 files total. The original Nelson used 30 files — this version consolidates everything through symbolic compression.
 
 ## Customisation
 

@@ -19,6 +19,11 @@ blockers: [{item, owner, action, eta}]
 budget: {spent, remaining} | risks: [{risk, mitigation}]
 decision: continue|rescope|stop + rationale
 
+## Τ.rescope (Ω₄ rescope output)
+original_scope: [in, out] | revised_scope: [in, out]
+trigger: | rationale: | impact: [tasks_affected, timeline, budget]
+approval: COORD|human
+
 ## Τ.review (REV output)
 target: | assumption_tested: | failure_mode: | blast_radius:
 checks: [{check, result}]

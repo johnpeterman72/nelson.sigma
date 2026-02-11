@@ -48,13 +48,6 @@ Each crew member: strictly within role def. See Φ₁₁.
 
 Max 4 crew/unit. If more needed → split into 2 units.
 
-| Size | When | Manifest |
-|---|---|---|
-| 0 | Atomic, single-pass | LEAD implements directly |
-| 1-2 | Typical | PWO ± 1 specialist |
-| 3 | Complex w/ research/testing | PWO + 2 specialists |
-| 4 | Multi-part orchestration | XO + PWO + 2 specialists |
-
 ## Unit Names
 
 Assign during Ω₂. Match task weight.
@@ -64,3 +57,11 @@ Destroyers (high-risk): Daring, Diamond, Defender
 Patrol (small): Forth, Trent, Spey
 Flagships (critical-path): Victory, Warspite, Vanguard
 Submarines (research): Astute, Ambush, Artful
+
+## Spawning Crew
+
+LEAD creates crew via Task tool:
+- team_name: current team | name: "{unit}-{role}" (e.g., "daring-pwo")
+- subagent_type: from role table (general-purpose or Explore)
+Brief each crew: role, sub-task, file ownership, constraints, station tier.
+Crew report to LEAD only. LEAD synthesizes + reports to COORD.
