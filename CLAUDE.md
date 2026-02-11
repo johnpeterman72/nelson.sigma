@@ -1,24 +1,20 @@
-# Nelson
+# Nelson♦Σ
 
-Nelson is a Claude Code skill for coordinating agent work using Royal Navy terminology. It provides a six-step operational framework: Sailing Orders, Form the Squadron, Battle Plan, Quarterdeck Rhythm, Action Stations, and Stand Down.
+Nelson is a token-efficient Claude Code skill for coordinating agent teams. It uses symbolic notation (Greek letters, arrays, compressed shorthand) to encode a 6-step operational framework: Define, Compose, Plan, Monitor, Verify, Close.
 
 ## Project structure
 
 ```
 .claude/skills/nelson/
-  SKILL.md              — Main entrypoint (what Claude reads)
-  references/           — Supporting docs loaded on demand
-    action-stations.md    — Risk tier definitions (Station 0–3)
-    admiralty-templates.md — Index routing to individual template files
-    admiralty-templates/   — One file per template, loaded on demand
-    crew-roles.md         — Crew role definitions, ship names & sizing rules
-    damage-control.md     — Index routing to individual procedure files
-    damage-control/       — One file per procedure, loaded on demand
-    squadron-composition.md — Mode selection & team sizing rules
-    standing-orders.md    — Index routing to individual anti-pattern files
-    standing-orders/      — One file per anti-pattern, loaded on demand
-  agents/               — Agent interface definitions
-demos/                  — Example applications built with Nelson
+  SKILL.md              — Legend + Ω₁₋₆ workflow + Φ standing orders + doctrine
+  references/
+    roles.md            — Ρ roles, mode selection, crew tree, unit names
+    stations.md         — Σ₀₋₃ risk tiers + controls
+    templates.md        — Τ output templates (define, plan, manifest, checkpoint, review, close)
+    damage-control.md   — Δ recovery procedures
+  agents/
+    openai.yaml         — Agent interface definition
+demos/                  — Example applications
 ```
 
 ## No build system
@@ -27,7 +23,7 @@ This is a documentation-driven skill with zero runtime dependencies. There is no
 
 ## Testing changes
 
-Install the skill locally and run a mission to verify. Either tell Claude Code "Install skills from https://github.com/harrymunro/nelson" or copy the skill directory manually:
+Install the skill locally and run a mission to verify. Either tell Claude Code "Install skills from https://github.com/johnpeterman72/nelson.sigma" or copy the skill directory manually:
 
 ```bash
 mkdir -p <target-project>/.claude/skills
@@ -38,8 +34,8 @@ Then invoke `/nelson` in Claude Code.
 
 ## Code style
 
-- Keep instructions simple and clear
-- Follow the existing Royal Navy tone and terminology
+- Token-efficient: symbolic notation, arrays, compressed shorthand
+- Emojis for user-facing output; symbols for AI-internal logic
 - Markdown for all documentation; YAML for agent interfaces
 - The battleships demo (`demos/battleships/index.html`) uses vanilla HTML/CSS/JS with no dependencies
 

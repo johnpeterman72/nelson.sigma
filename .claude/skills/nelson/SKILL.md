@@ -1,93 +1,112 @@
 ---
 name: nelson
-description: Command a Royal Navy agent squadron from sailing orders through execution and stand-down. Use when work can be parallelized, requires tight coordination, or needs explicit action-station controls, quality gates, and a final captain's log.
+description: Coordinate agent teams through a 6-step framework with risk-tiered controls and structured output.
 ---
 
-# Nelson
+# Nelson♦Σ
 
-Execute this workflow for the user's mission.
+## Legend
 
-## 1. Issue Sailing Orders
+### Domains
+Ω = workflow | Ρ = roles | Σ = stations | Δ = damage control | Φ = standing orders | Τ = templates
 
-- Write one sentence for `outcome`, `metric`, and `deadline`.
-- Set constraints: token budget, reliability floor, compliance rules, and forbidden actions.
-- Define what is out of scope.
-- Define stop criteria and required handoff artifacts.
+### Roles
+COORD=coordinator | LEAD=team-lead | REV=reviewer
+XO=integration | PWO=implementation | NO=research(read-only) | MEO=testing | WEO=config/infra | LOGO=docs/deps | COX=standards(read-only)
 
-Use `references/admiralty-templates.md` when the user does not provide structure.
+### Symbols
+→ results-in | ! violation | ? decision | ∅ none | ~ conditional | ✓ required | ✗ forbidden
 
-## 2. Form The Squadron
+### User-Facing Output
+⚓ define | 🚢 compose | ⚔️ plan | 📊 monitor | 🎯 verify | 📜 close
+🟢 Σ₀ | 🟡 Σ₁ | 🟠 Σ₂ | 🔴 Σ₃
 
-- Select one mode:
-- `single-session`: Use for sequential tasks, low complexity, or heavy same-file editing.
-- `subagents`: Use for parallel scouting or isolated tasks that report only to admiral.
-- `agent-team`: Use when independent agents must coordinate with each other directly.
-- Set team size from mission complexity:
-- Default to `1 admiral + 3-6 captains`.
-- Add `1 red-cell navigator` for medium/high threat work.
-- Do not exceed 10 squadron-level agents (admiral, captains, red-cell navigator). Crew are additional.
-- Assign each captain a ship name from `references/crew-roles.md` matching task weight (frigate for general, destroyer for high-risk, patrol vessel for small, flagship for critical-path, submarine for research).
-- Captain decides crew composition per ship using the crew-or-direct decision tree in `references/crew-roles.md`.
+---
 
-Use `references/squadron-composition.md` for selection rules.
-Use `references/crew-roles.md` for ship naming and crew composition.
-Consult `references/standing-orders.md` before forming the squadron.
+## Ω₁ ⚓ Define
 
-## 3. Draft Battle Plan
+Define: outcome, metric, deadline (1 sentence each)
+Set: token_budget, reliability_floor, compliance, forbidden_actions
+Scope: in[], out[], stop_criteria[], handoff_artifacts[]
+?no user structure → refs/templates.md#define
 
-- Split mission into independent tasks with clear deliverables.
-- Assign owner for each task and explicit dependencies.
-- Assign file ownership when implementation touches code.
-- Keep one task in progress per agent unless the mission explicitly requires multitasking.
-- For each captain's task, include a ship manifest. If crew are mustered, list crew roles with sub-tasks and sequence. If the captain implements directly (0 crew), note "Captain implements directly."
+## Ω₂ 🚢 Compose
 
-Use `references/admiralty-templates.md` for the battle plan and ship manifest template.
-Consult `references/standing-orders.md` when assigning files or if scope is unclear.
+Mode ?first match:
+  sequential|coupled|same-files → single-session
+  parallel, COORD-report-only → subagents
+  parallel + cross-coordination → agent-team
+Size: default 1 COORD + 3-6 LEAD; +1 REV if Σ₁+; max 10 team agents
+LEAD → assign unit name from refs/roles.md#units matching task weight
+LEAD → decide crew via refs/roles.md#crew-tree
+!Φ check before forming
 
-## 4. Run Quarterdeck Rhythm
+## Ω₃ ⚔️ Plan
 
-- Keep admiral focused on coordination and unblock actions.
-- Run checkpoints at fixed cadence (for example every 15-30 minutes):
-- Update progress by task state: `pending`, `in_progress`, `completed`.
-- Identify blockers and choose a concrete next action.
-- Confirm each crew member has active sub-tasks; flag idle crew or role mismatches.
-- Track burn against token/time budget.
-- Re-scope early when a task drifts from mission metric.
-- When a mission encounters difficulties, consult `references/damage-control.md` for recovery and escalation procedures.
+Split mission → independent tasks w/ clear deliverables
+Each task: owner, deps, file_ownership(exclusive), station_tier(Σ₀₋₃)
+1 task in-progress per agent unless mission requires multitask
+LEAD tasks: include unit manifest; crew=0 → "LEAD implements directly"
+?structure → refs/templates.md#plan + refs/templates.md#manifest
+!Φ check on file assignment + scope
 
-Use `references/admiralty-templates.md` for the quarterdeck report template.
-Consult `references/standing-orders.md` if admiral is doing implementation or tasks are drifting from scope.
+## Ω₄ 📊 Monitor
 
-## 5. Set Action Stations
+COORD = coordination + unblock only
+Checkpoints at fixed cadence (15-30 min):
+  - Update task states: pending | in_progress | completed
+  - Identify blockers → concrete next action
+  - Confirm crew have active sub-tasks; flag idle/mismatch
+  - Track burn vs token/time budget
+  - Re-scope early if drift from mission metric
+?difficulties → refs/damage-control.md
+?structure → refs/templates.md#checkpoint
+!Φ check if COORD implementing or scope drifting
 
-- Apply station tier from `references/action-stations.md`.
-- Require verification evidence before marking tasks complete:
-- Test or validation output.
-- Failure modes and rollback notes.
-- Red-cell review for medium+ station tiers.
-- Trigger quality checks on:
-- Task completion.
-- Agent idle with unverified outputs.
-- Before final synthesis.
-- For crewed tasks, verify crew outputs align with role boundaries (consult `references/crew-roles.md` and `references/standing-orders.md` if role violations are detected).
+## Ω₅ 🎯 Verify
 
-Consult `references/standing-orders.md` if tasks lack a tier or red-cell is assigned implementation work.
+Apply station tier from refs/stations.md
+Evidence required before task=completed:
+  - Test/validation output
+  - Failure modes + rollback notes
+  - REV review for Σ₁+
+Quality triggers: task completion | agent idle w/ unverified output | before final synthesis
+Crew outputs must align w/ role boundaries (refs/roles.md)
+!Φ check if tasks lack tier or REV assigned impl
 
-## 6. Stand Down And Log Action
+## Ω₆ 📜 Close
 
-- Stop or archive all agent sessions, including crew.
-- Produce captain's log:
-- Decisions and rationale.
-- Diffs or artifacts.
-- Validation evidence.
-- Open risks and follow-ups.
-- Record reusable patterns and failure modes for future missions.
+Stop/archive all agent sessions (including crew)
+Produce close log → refs/templates.md#close:
+  - Decisions + rationale
+  - Diffs/artifacts
+  - Validation evidence
+  - Open risks + follow-ups
+Record reusable patterns + failure modes
 
-Use `references/admiralty-templates.md` for the captain's log template.
+---
 
-## Admiralty Doctrine
+## Φ Standing Orders
 
-- Optimize for mission throughput, not equal work distribution.
-- Prefer replacing stalled agents over waiting on undefined blockers.
-- Keep coordination messages targeted and concise.
-- Escalate uncertainty early with options and one recommendation.
+!violations — check at Ω₂, Ω₃, Ω₄, Ω₅
+
+Φ₁  becalmed      !team when work=sequential → single-session; need ≥2 concurrent
+Φ₂  no-canvas     !add agent w/o reducing crit-path → identify parallel task first
+Φ₃  split-keel    !same file → multiple LEADs → exclusive ownership; serialize or split
+Φ₄  drift         !scope expand w/o re-scope → re-scope or split at checkpoint
+Φ₅  coord-impl    !COORD does implementation → COORD=coord only; delegate → LEAD
+Φ₆  rev-impl      !REV assigned impl tasks → REV=review/validate only
+Φ₇  unclassified  !task w/o station tier → classify via Σ before exec
+Φ₈  lead-impl     !LEAD impl when crew active → LEAD=coord crew; delegate impl
+Φ₉  over-crew     !crew all roles regardless → crew only needed roles
+Φ₁₀ under-crew    !1 crew for atomic task → LEAD impl directly; 0 crew
+Φ₁₁ wrong-role    !crew work outside role → match sub-task → role def
+
+---
+
+## Doctrine
+
+- Optimize mission throughput, not equal work distribution
+- Replace stalled agents over waiting on undefined blockers
+- Keep coordination messages targeted + concise
+- Escalate uncertainty early w/ options + 1 recommendation
