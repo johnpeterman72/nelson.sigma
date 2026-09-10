@@ -1,5 +1,7 @@
 # Nelson♦Σ
 
+<img src="docs/images/nelson-sigma-header.jpg" alt="Nelson♦Σ — Royal Navy doctrine for Claude Code agents. Eight steps, four risk tiers, zero scripts. Symbolic notation, 71% fewer tokens." width="100%">
+
 [![Version](https://img.shields.io/github/v/release/johnpeterman72/nelson.sigma)](https://github.com/johnpeterman72/nelson.sigma/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-skill-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
