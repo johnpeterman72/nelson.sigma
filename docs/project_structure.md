@@ -14,8 +14,9 @@ hooks/
   conftest.py             — Shared test helpers
   test_nelson_hooks.py    — Tests for hook handlers
 skills/nelson/
-  SKILL.md                — Main entrypoint (what Claude reads)
-  references/             — Supporting docs loaded on demand
+  SKILL.md                — Main entrypoint (what Claude reads), Nelson♦Σ notation
+  references/             — Supporting docs loaded on demand, Nelson♦Σ notation
+    sigma-legend.md         — Symbol legend: Ω Π Μ Σ Η Ε Ρ Φ Δ Τ, operators, script aliases
     action-stations.md      — Risk tier definitions (Station 0–3)
     commendations.md        — Recognition signals & graduated correction
     crew-roles.md           — Crew role definitions, ship names & sizing rules
@@ -23,6 +24,7 @@ skills/nelson/
     model-selection.md      — Cost-optimized model assignment for agents
     royal-marines.md        — Royal Marines deployment rules & specialisations
     squadron-composition.md — Mode selection & team sizing rules
+    stand-down-star.md      — One-time GitHub star prompt procedure (Ω₈)
     structured-data.md      — Structured fleet data capture reference
     the-estimate.md         — 7 Question Maritime Tactical Estimate reference
     tool-mapping.md         — Nelson-to-Claude Code tool reference

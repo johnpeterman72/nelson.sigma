@@ -1,4 +1,4 @@
-# Sailing Orders Template
+# Τ Sailing Orders
 
 ```text
 Sailing orders:

@@ -1,10 +1,7 @@
-# Standing Order: Crew Without Canvas
+# Standing Order Φ₃: Crew Without Canvas
 
-Do not add agents without reducing the critical path length of the mission.
+! Adding agents without shortening the mission's critical path.
 
-**Symptoms:**
-- More captains are active but the mission does not finish sooner.
-- Coordination messages increase while throughput stays flat.
-- Token budget inflates with no improvement in mission metric.
+**Symptoms:** more CPTs active, mission finishes no sooner · coordination messages rise, throughput flat · token budget inflates, mission metric unchanged.
 
-**Remedy:** Before adding an agent, identify the specific critical-path task it will parallelize. If no such task exists, do not add the agent.
+**Remedy:** before adding an agent, name the critical-path task it will parallelise. ∄ such task → ✗ add it.

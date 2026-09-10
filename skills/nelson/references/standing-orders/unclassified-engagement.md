@@ -1,10 +1,7 @@
-# Standing Order: Unclassified Engagement
+# Standing Order Φ₈: Unclassified Engagement
 
-Do not execute tasks without first classifying them through the action stations framework.
+! Executing tasks without classifying them through action stations first.
 
-**Symptoms:**
-- Tasks proceed without stated risk tier or required controls.
-- No rollback notes, verification evidence, or red-cell review where warranted.
-- High-risk changes ship with the same controls as routine patches.
+**Symptoms:** tasks proceed with no stated Σ tier or controls · no rollback notes, verification evidence, or red-cell review where warranted · high-risk changes ship with routine-patch controls.
 
-**Remedy:** Classify every task against the station tiers in `references/action-stations.md` before execution begins. Apply the minimum required controls for the assigned tier.
+**Remedy:** classify ∀ task against the Σ tiers in `references/action-stations.md` before execution; apply the minimum controls for its tier.

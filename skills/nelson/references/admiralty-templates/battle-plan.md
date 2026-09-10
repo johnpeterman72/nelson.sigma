@@ -1,15 +1,15 @@
-# Battle Plan Template
+# Τ Battle Plan
 
-The rendered plan lives at `{mission-dir}/battle-plan.md` and is the prose authority for the mission — commander's intent and per-task briefs. The structured form at `{mission-dir}/battle-plan.json` is the execution-data authority (owners, dependencies, station tiers, file ownership). Keep them aligned: edit one, mirror the change in the other.
+`{mission-dir}/battle-plan.md` = prose authority (commander's intent, per-task briefs). `{mission-dir}/battle-plan.json` = execution-data authority (owners, dependencies, Σ tiers, file ownership). Keep aligned: edit one → mirror in the other.
 
-Every captain's brief opens with the commander's intent from the Estimate (§2) — one paragraph, verbatim. This is how each ship sails under a shared understanding of purpose.
+∀ CPT brief opens with the commander's intent from the Estimate (§2): one paragraph, verbatim, so every ship sails under a shared purpose.
 
 ```text
 Commander's intent:
 [One paragraph from the Estimate §2 — prepended to every captain's brief.]
 
 Workflow suitability:
-[For non-workflow modes: one line explaining why workflow was not selected.]
+[Non-workflow modes: one line on why workflow was not selected.]
 
 Workflow Charter: [include only when mode is workflow or hybrid-workflow]
 - Execution primitive: [workflow | hybrid-workflow]
@@ -22,8 +22,8 @@ Workflow Charter: [include only when mode is workflow or hybrid-workflow]
 
 Task ID:
 - Name:
-- Owner: [assigned at Step 4 — Form the Squadron]
-- Ship (if crewed): [assigned at Step 4 — Form the Squadron]
+- Owner: [assigned at Ω₄]
+- Ship (if crewed): [assigned at Ω₄]
 - Crew manifest (if crewed):
 - Deliverable:
 - Dependencies:
@@ -41,14 +41,9 @@ Task ID:
   - blocks: [task name or "stand-down"]
 ```
 
-**Modification targets.** When a task extends existing code, the `Modification targets` field anchors the captain to specific functions, variables, and configuration that must be modified in place. This field flows from the Estimate's Reconnaissance (Q1) and Terrain (Q4) — if those questions identified the existing code, the Battle Plan must preserve that specificity. Omit the field for greenfield tasks where no existing code is being extended.
-
-**Acceptance criteria inheritance.** Each task inherits the acceptance criteria of its parent effect from the Estimate (§3). Captains own the choice of verification method per criterion (test, type-check, lint, review, or visual). The quarterdeck records each outcome (`pass` / `fail` / `not-verified`) via `nelson-data.py estimate-outcome`.
-
-JSON schema note: the battle-plan `task` object accepts an optional `acceptance_criteria: list[str]` field carrying the inherited criteria. This enables programmatic aggregation of verification outcomes. The `task` object also accepts an optional `modification_targets: list[str]` field for tracking the functions, environment variables, or configuration that must be modified in place.
-
-**Workflow advisory fields.** The top-level battle-plan object may include optional planning fields: `execution_primitive`, `workflow_suitability`, `workflow_phases`, `human_gates`, `verification_contract`, `cost_guardrail`, `fallback_mode`, and `workflow`. These are advisory in v1. They document the workflow charter and gates; they do not generate runnable `.claude/workflows/*.js` files.
-
-**`admiralty-action-required`:** Mark `yes` for any task where a step cannot be completed by an agent — requires the human to interact with an external system, provide credentials or URLs, or take an action only the human can perform. Fill this field consciously for every task; leaving it blank is a claim that the task requires no human action. When marked `yes`, the admiral will surface this in the Admiralty Action List before agents launch, and the captain will invoke the `awaiting-admiralty` standing order when the step is reached.
-
-**Note on `blocks:` field:** The `blocks:` value names the task that cannot proceed until the human acts. The Admiralty Action List displays this as `unblocks:` — same task name, inverted label.
+- **Modification targets:** task extends existing code → name the specific functions, variables, config to modify in place. Flows from Ε₁ Reconnaissance ∧ Ε₄ Terrain: where those identified existing code, the plan preserves that specificity. Omit for greenfield tasks.
+- **Acceptance criteria:** ∀ task inherits its parent effect's criteria (Estimate §3). CPT chooses the verification method per criterion (test, type-check, lint, review, visual). Quarterdeck records ∀ outcome (`pass` / `fail` / `not-verified`) via `nelson-data.py estimate-outcome`.
+- **JSON schema:** the battle-plan `task` object accepts optional `acceptance_criteria: list[str]` (programmatic aggregation of verification outcomes) ∧ optional `modification_targets: list[str]` (functions, env vars, config to modify in place).
+- **Workflow advisory fields:** the top-level battle-plan object ~ `execution_primitive`, `workflow_suitability`, `workflow_phases`, `human_gates`, `verification_contract`, `cost_guardrail`, `fallback_mode`, `workflow`. Advisory in v1: they document the charter and gates, ¬ generate runnable `.claude/workflows/*.js`.
+- **`admiralty-action-required`:** `yes` when a step cannot be completed by an agent (human must interact with an external system, provide credentials or URLs, or act where only a human can). Fill consciously ∀ task: blank = a claim that no human action is needed. `yes` → ADM surfaces it in the Admiralty Action List before agents launch; CPT invokes the `awaiting-admiralty` standing order when the step is reached.
+- **`blocks:`** names the task that cannot proceed until the human acts. The Admiralty Action List displays it as `unblocks:` (same task name, inverted label).

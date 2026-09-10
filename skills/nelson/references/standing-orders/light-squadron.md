@@ -1,20 +1,15 @@
-# Standing Order: Light Squadron
+# Standing Order Φ₂: Light Squadron
 
-Do not group independent tasks onto fewer captains than their independence warrants.
+! Grouping independent tasks onto fewer CPTs than their independence warrants.
 
-**Symptoms:**
-- Multiple sections, documents, or code areas are bundled onto one captain when they share no files and have no sequencing dependency.
-- The captain serializes work that could run concurrently, extending wall-clock time with no benefit.
-- The battle plan has fewer captains than there are independent work units.
-- Admiral defaults to a fixed captain count without first counting the parallelizable leaves.
+**Symptoms:** sections, documents, or code areas sharing no files ∧ no sequencing dependency bundled onto one CPT · CPT serialises work that could run concurrently, extending wall-clock time for no gain · fewer CPTs than independent work units · ADM fixes a CPT count before counting parallelisable leaves.
 
-**Remedy:** Split bundled tasks onto separate captains. The number of captains should equal the number of truly independent work units, bounded by the squadron cap.
+**Remedy:** split bundled tasks onto separate CPTs. CPT count = truly independent work units, bounded by the squadron cap. Ask "maximum tasks runnable concurrently with zero shared state?" → target CPT count.
 
-Ask: "What is the maximum number of tasks that can run concurrently with zero shared state?" That number is the target captain count.
+Bundle onto one CPT only when tasks:
 
-Only bundle tasks onto one captain when they:
-- Share files where parallel edits would produce unresolvable merge conflicts (same functions, tight coupling) — use `isolation: "worktree"` when files overlap but merge cost is justified (see `squadron-composition.md`), or
-- Have a genuine sequencing dependency (task B requires output of task A), or
-- Are so small that the context-setup cost of a separate agent clearly exceeds the work itself.
+- share files where parallel edits would conflict unresolvably (same functions, tight coupling) — `isolation: "worktree"` when files overlap but merge cost is justified (`squadron-composition.md`), ∨
+- have a genuine sequencing dependency (B needs A's output), ∨
+- are so small that a separate agent's context-setup cost clearly exceeds the work.
 
-See also `standing-orders/crew-without-canvas.md` for the inverse risk: do not add agents without reducing critical path length.
+Inverse risk: `standing-orders/crew-without-canvas.md` — ✗ add agents without shortening the critical path.

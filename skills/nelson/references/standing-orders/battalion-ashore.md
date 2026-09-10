@@ -1,18 +1,7 @@
-# Battalion Ashore
+# Standing Order Φ₁₃: Battalion Ashore
 
-**Rule:** Do not deploy marines for work that belongs to the ship's crew or warrants a new ship.
+! Deploying RM for work that belongs to the ship's crew or warrants a new ship.
 
-## Symptoms
+**Symptoms:** CPT deploys RM constantly instead of mustered crew · RM objectives grow beyond single sorties · RM edit files outside the ship's ownership · more RM deployed than crew mustered.
 
-- Captain deploys marines constantly instead of using mustered crew.
-- Marine objectives expand beyond single sorties.
-- Marines editing files outside the ship's ownership.
-- More marines deployed than crew mustered.
-
-## Remedy
-
-- Use **crew** for sub-tasks of the ship's deliverable.
-- **Escalate to admiral** for sustained independent work that needs its own ship.
-- Marines are for **focused sorties only** — quick recon, targeted fixes, one-shot tasks.
-
-See `references/royal-marines.md` for the deploy-or-escalate decision tree.
+**Remedy:** crew for sub-tasks of the ship's deliverable · escalate to ADM for sustained independent work needing its own ship · RM for focused sorties only: quick recon, targeted fixes, one-shot tasks. Deploy-or-escalate tree: `references/royal-marines.md`.

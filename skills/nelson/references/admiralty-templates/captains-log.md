@@ -1,4 +1,4 @@
-# Captain's Log Template
+# Τ Captain's Log
 
 ```text
 Mission summary:

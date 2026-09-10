@@ -1,10 +1,7 @@
-# Standing Order: Skeleton Crew
+# Standing Order Φ₁₁: Skeleton Crew
 
-Do not spawn a single crew member for a task the captain could complete directly.
+! Spawning one crew member for a task the CPT could do directly.
 
-**Symptoms:**
-- Captain spawns one PWO for an atomic, single-pass task.
-- The coordination overhead of briefing and reviewing one crew member exceeds the work itself.
-- Task would complete faster if captain implemented it directly.
+**Symptoms:** CPT spawns one PWO for an atomic, single-pass task · briefing and reviewing one crew member costs more than the work · task would finish faster done by the CPT.
 
-**Remedy:** If the task is atomic and needs no specialist input, captain implements directly with 0 crew. Only muster crew when the task benefits from delegation — multiple sub-tasks, specialist expertise, or parallel work.
+**Remedy:** atomic task ∧ no specialist input → CPT implements directly, 0 crew. Muster crew only when delegation pays: multiple sub-tasks, specialist expertise, or parallel work.

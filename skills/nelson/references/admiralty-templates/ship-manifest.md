@@ -1,4 +1,4 @@
-# Ship Manifest Template
+# Τ Ship Manifest
 
 ```text
 Ship:

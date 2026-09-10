@@ -1,16 +1,16 @@
 # Model Selection
 
-Use this reference when the sailing orders express cost-savings priority. It governs model assignment for all squadron agents.
+Apply when the sailing orders express cost-savings priority. Governs model assignment for ∀ squadron agent.
 
 ## Detecting Cost-Savings Intent
 
-Nelson infers cost-savings priority from natural language in the sailing orders or initial prompt. Signals include phrases such as:
+Inferred from natural language in the sailing orders or initial prompt:
 
 - "keep costs low", "stay within budget", "budget is a concern"
 - "use cheaper models", "use haiku where possible"
 - "be aggressive with cost savings", "minimize spend"
 
-The intensity of the language calibrates the aggressiveness of weight adjustment (see Hybrid Adjustment below).
+Language intensity calibrates adjustment aggressiveness (Hybrid Adjustment below).
 
 ## Default Weight Table
 
@@ -28,46 +28,40 @@ The intensity of the language calibrates the aggressiveness of weight adjustment
 
 ## Threshold Rule
 
-In cost-savings mode:
-
-- Weight ≤ 4 after adjustment → assign **haiku**
-- Weight ≥ 5 after adjustment → inherit **admiral's model**
+Cost-savings mode, after adjustment: weight ≤4 → **haiku** · weight ≥5 → inherit **ADM's model**.
 
 ## Estimate Phase Carve-Out
 
-The Estimate phase (Q1–Q7) is exempt from cost-savings model adjustment. All Estimate subagents — Explorer dispatches at Q1 and the Q2–Q3 / Q4–Q7 dispatches — inherit the admiral's model.
+Ω₂ (Ε₁–Ε₇) is exempt. ∀ Estimate subagent (Ε₁ Explorer dispatches, Ε₂–Ε₃ and Ε₄–Ε₇ dispatches) inherits ADM's model. Rationale: planning quality dominates downstream execution quality; a weaker model yields poorer terrain assessments, looser commander's guidance, weaker acceptance criteria, which the squadron carries into implementation. Degrading the Estimate to save tokens is a false economy.
 
-Rationale: planning quality dominates downstream execution quality. A weaker model in The Estimate produces poorer terrain assessments, looser commander's guidance, and weaker acceptance criteria, which the squadron then carries into implementation. Degrading the Estimate to save tokens is a false economy.
-
-When invoking Estimate subagents:
-- Omit the `model:` parameter on the `Agent` tool call so the subagent inherits the admiral's model.
-- Do not apply the haiku briefing enhancement blocks below — they are conditional on haiku assignment, which does not occur during The Estimate.
-- Cost-savings adjustment resumes at Battle Plan and Formation steps, where it applies normally.
+- omit `model:` on the `Agent` call → subagent inherits ADM's model
+- ✗ the haiku briefing enhancement blocks below (conditional on haiku assignment, which never occurs in Ω₂)
+- cost-savings adjustment resumes at Ω₃ and Ω₄, where it applies normally
 
 ## Hybrid Adjustment
 
 The tasking agent adjusts default weights before assignment:
 
-- **Raise weight** when the task involves judgment, edge cases, or verification that exceeds the role default.
-- **Lower weight** when the task is more atomic or contained than the role default suggests.
+- **raise** when the task involves judgement, edge cases, or verification beyond the role default
+- **lower** when the task is more atomic or contained than the role default suggests
 
-Scale of adjustment calibrates to intensity of cost-savings request:
+Scale to intensity of the request:
 
-- Modest language ("keep costs low") → modest pressure; don't push roles at 5–6 below the threshold unless clearly justified.
-- Emphatic language ("be aggressive") → willing to push roles normally at 5–6 through the threshold when the task is contained.
+- modest ("keep costs low") → modest pressure; ✗ push roles at 5–6 below the threshold unless clearly justified
+- emphatic ("be aggressive") → willing to push roles normally at 5–6 through the threshold when the task is contained
 
-No hard bounds are set. The admiral uses judgment.
+No hard bounds; ADM judgement.
 
 ## Model Assignment Rules
 
-- The admiral's model is **never overridden**.
-- All agents at weight ≥ 5 inherit the admiral's model. **Omit the `model` parameter entirely** in the Task tool call — do not specify `"sonnet"`, as that alias resolves to an older version and does not match the admiral's model.
-- For haiku agents (weight ≤ 4), always specify `model: "haiku"` explicitly.
-- Display weight and assigned model in the squadron formation summary alongside ship names and tasks.
+- ADM's model is **never overridden**
+- weight ≥5 → inherit ADM's model: **omit the `model` parameter entirely** in the Task tool call. ✗ `"sonnet"`: the alias resolves to an older version and does not match ADM's model
+- weight ≤4 → always `model: "haiku"` explicitly
+- display weight and assigned model in the squadron formation summary alongside ship names and tasks
 
 ## Briefing Enhancements (haiku agents only)
 
-These requirements apply whenever any tasking agent — admiral, captain, or crew — assigns haiku to a subordinate. When assigning haiku, add three blocks to that agent's briefing:
+Whenever any tasking agent (ADM, CPT, or crew) assigns haiku to a subordinate, add three blocks to that agent's briefing:
 
 ### 1. Identity Anchor (top of briefing)
 
@@ -75,7 +69,7 @@ These requirements apply whenever any tasking agent — admiral, captain, or cre
 
 ### 2. Explicit Output Format
 
-Specify exactly what to return: format, required fields, length, and what to omit. Remove ambiguity. Example:
+State exactly what to return: format, required fields, length, what to omit. Remove ambiguity. Example:
 
 > Return a JSON object with keys `status`, `summary`, and `files_changed`. Do not include implementation reasoning or next steps.
 
@@ -83,30 +77,28 @@ Specify exactly what to return: format, required fields, length, and what to omi
 
 > Before executing, list your steps as a numbered plan. If any step is unclear, flag it now rather than guessing.
 
-These three blocks are **conditional on haiku assignment**. Do not include them in standard (non-cost-savings) briefings or in briefings for agents assigned the admiral's model.
+Conditional on haiku assignment: ✗ in standard (non-cost-savings) briefings ∨ briefings for agents on ADM's model.
 
 ## Tasking Agent Discipline (haiku agents only)
 
-Whoever writes the task — admiral, captain, or crew — must compensate for reduced inferencing capacity by making the task itself precise. Vague instructions are not rescued by the briefing enhancement blocks above.
-
-Each haiku task description must include:
+Whoever writes the task (ADM, CPT, or crew) compensates for reduced inferencing capacity by making the task itself precise. Vague instructions are not rescued by the blocks above. ∀ haiku task description MUST include:
 
 ### Explicit Constraints
 
-State what the agent must not do, must not touch, and must stay within. Do not rely on the agent to infer scope limits from context.
+What the agent must not do, must not touch, must stay within. ✗ rely on the agent inferring scope limits from context.
 
 > Example: "Only read files under `src/auth/`. Do not modify any file. Do not follow imports outside that directory."
 
 ### Definition of Done
 
-State a concrete, testable condition that signals the task is complete. Avoid open-ended outcomes.
+A concrete, testable condition that signals completion. ✗ open-ended outcomes.
 
 > Example: "Done when you have returned a JSON list of all public method names in `JwtMiddleware`. Stop after that — do not analyze their bodies."
 
 ### Escalation Triggers
 
-State the specific conditions under which the agent must stop and report rather than proceed. Do not expect haiku to self-identify when it is out of depth.
+Specific conditions under which the agent stops and reports rather than proceeds. ✗ expect haiku to self-identify when out of depth.
 
 > Example: "If the file does not exist, or if you find more than one class matching that name, stop and report what you found. Do not guess which one to use."
 
-These requirements are **conditional on haiku assignment**. Standard briefings for agents on the admiral's model do not require this level of prescription.
+Conditional on haiku assignment; standard briefings for agents on ADM's model do not need this level of prescription.

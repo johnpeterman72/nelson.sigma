@@ -1,17 +1,9 @@
-# Standing Order: Admiral at the Helm
+# Standing Order Φ₆: Admiral at the Helm
 
-The admiral MUST NOT perform implementation work. Implementation work (writing code, editing files, running tests) remains strictly delegated to ships.
+ADM ✗ implementation work (writing code, editing files, running tests). All implementation stays delegated to ships.
 
-**The synthesis boundary:** Coordination means issuing orders, tracking progress, resolving blockers, and running checkpoints. **Read-only recombination** — combining text from completed ship reports already present in the admiral's context, without generating new analysis, code, or deliverables beyond what ships produced — is permitted for the admiral **only once all ships have reported successful completion with no open blockers or unresolved failures**.
+**Synthesis boundary:** coordination = issuing orders, tracking progress, resolving blockers, running checkpoints. **Read-only recombination** = combining text from completed ship reports already in ADM context, generating no new analysis, code, or deliverables beyond what ships produced. Permitted for ADM only once ∀ ships have reported successful completion ∧ no open blockers ∨ unresolved failures remain. ✗ dispatch extra sub-agents just to combine data already in context. ADM may write the captain's log and other coordination artifacts.
 
-Do not dispatch additional sub-agents just to combine data you already have in context. Once the ships have completed their individual implementation tasks and reported back, the admiral may recombine those results without generating new content. The admiral is also permitted to write the captain's log (Step 6) and other coordination artifacts.
+**Symptoms:** ADM writes code, edits files, or runs tests · CPTs idle awaiting direction while ADM is heads-down · quarterdeck rhythm breaks because ADM misses checkpoints · blockers accumulate unresolved · ADM spawns a sub-agent purely to concatenate or summarise text already in context · battle plan assigns generative synthesis to ADM rather than a CPT.
 
-**Symptoms of a violation:**
-- Admiral writes code, edits files, or runs tests directly.
-- Captains sit idle waiting for direction while admiral is heads-down on implementation.
-- Quarterdeck rhythm breaks because admiral is unavailable for checkpoint reviews.
-- Blockers accumulate without resolution.
-- Admiral spawns a sub-agent purely to concatenate or summarize text already present in the context window.
-- Battle plan assigns generative synthesis to the admiral rather than a captain.
-
-**Remedy:** Admiral MUST delegate all implementation to captains. If the admiral is doing implementation, stop immediately, spawn a captain, and delegate. If the work is read-only recombination of completed ship outputs already present in context (i.e., no new generation required), the admiral may proceed without delegation.
+**Remedy:** delegate ∀ implementation to CPTs. ADM found implementing → stop immediately, spawn a CPT, delegate. Read-only recombination of completed ship outputs already in context (no new generation) → proceed without delegation.

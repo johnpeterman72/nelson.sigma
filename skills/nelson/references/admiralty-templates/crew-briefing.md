@@ -1,8 +1,6 @@
-# Crew Briefing Template
+# Τ Crew Briefing
 
-When spawning each captain, use the `Agent` tool (see `references/tool-mapping.md` for parameters by mode). Include this briefing in their prompt. Teammates do not inherit the lead's conversation context — they start with a clean slate and need explicit mission context to operate independently.
-
-Target size: ~500 tokens. Enough for the teammate to work without asking clarifying questions, but not so much that it wastes their context window.
+Spawn ∀ CPT with `Agent` (parameters by Μ: `references/tool-mapping.md`) and put this brief in the prompt. Teammates inherit none of the lead's conversation: clean slate, so the brief must carry explicit mission context. Target ≈500 tokens: enough to work without clarifying questions, ¬ so much it wastes their window.
 
 ```text
 == CREW BRIEFING ==
@@ -61,10 +59,10 @@ Marine Deployment Brief: use the full template at
 
 ## Field notes
 
-- **Mission** — Copy verbatim from sailing orders so the teammate shares the same outcome/metric framing.
-- **Ship** — From the ship manifest in the battle plan. Gives the teammate identity and signals task weight (frigate, destroyer, etc.).
-- **File Ownership** — Critical for preventing merge conflicts when multiple agents work in parallel. If no files are assigned, note "No file ownership — research/analysis only."
-- **Dependencies** — List both blocking (what must finish first) and blocked-by (what waits on this task). If none, note "Independent — no dependencies."
-- **Mission Directory** — The absolute path to the current mission directory. Captains use this path when writing damage reports and turnover briefs.
-- **Marine Capacity** — From the ship manifest. Tells the captain how many marines they may deploy (max 2). Omit if 0.
-- **Standing Orders** — Keep these to 4-5 lines. Project-specific standing orders can be appended here. The marine standing order tells captains they CAN deploy marines and where to find the rules — without this, captains have no knowledge of marines.
+- **Mission:** verbatim from sailing orders, so the teammate shares the outcome/metric framing.
+- **Ship:** from the ship manifest in the battle plan; gives identity ∧ signals task weight (frigate, destroyer, …).
+- **File Ownership:** prevents merge conflicts between parallel agents. No files assigned → "No file ownership — research/analysis only."
+- **Dependencies:** blocking (must finish first) ∧ blocked-by (waits on this task). None → "Independent — no dependencies."
+- **Mission Directory:** absolute path to the current mission directory; CPTs write damage reports ∧ turnover briefs there.
+- **Marine Capacity:** from the ship manifest; how many RM the CPT may deploy (max 2). Omit if 0.
+- **Standing Orders:** keep to 4-5 lines; project-specific orders may be appended. The marine order is what tells CPTs they CAN deploy marines and where the rules are; without it CPTs have no knowledge of marines.

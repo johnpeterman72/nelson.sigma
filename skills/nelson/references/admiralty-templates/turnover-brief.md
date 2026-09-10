@@ -1,16 +1,13 @@
-# Turnover Brief Template
+# Τ Turnover Brief
 
 ## Typed Handoff Packet (Primary)
 
-The primary turnover format is a structured JSON handoff packet written by `nelson-data.py handoff`. See `references/structured-data.md` for the schema and command reference.
-
-The typed packet is written to `{mission-dir}/turnover-briefs/{ship-name}-{timestamp}.json`. The replacement ship reads this JSON file as its first action.
+Primary format = structured JSON handoff packet written by `nelson-data.py handoff` (schema and command: `references/structured-data.md`) to `{mission-dir}/turnover-briefs/{ship-name}-{timestamp}.json`. The replacement ship reads it as its first action.
 
 ## Prose Turnover Brief (Companion)
 
-When a typed handoff packet has been written, the damaged ship may optionally also write a prose companion brief to `{mission-dir}/turnover-briefs/{ship-name}-{timestamp}.md` using the template below. This prose version supplements the JSON packet with a human-readable narrative for manual review. It is not the primary recovery artifact.
-
-If `nelson-data.py handoff` is unavailable (e.g., script error, pre-upgrade missions), the prose brief below serves as the fallback format.
+- Typed packet written → the damaged ship ~ also writes a prose companion to `{mission-dir}/turnover-briefs/{ship-name}-{timestamp}.md` from the template below: a human-readable narrative for manual review, ¬ the primary recovery artifact.
+- `nelson-data.py handoff` unavailable (script error, pre-upgrade missions) → the prose brief is the fallback format.
 
 ```text
 == TURNOVER BRIEF ==
@@ -33,8 +30,7 @@ Task assignment:
 - Dependencies: [upstream and downstream tasks]
 
 Progress log:
-- [Completed item 1 — specific description of what was done]
-- [Completed item 2 — specific description of what was done]
+- [Completed item — specific description of what was done]
 - [...]
 
 Running plot (work in progress when relieved):
@@ -44,17 +40,14 @@ Running plot (work in progress when relieved):
 
 Files touched:
 - [file path] — [description of changes made]
-- [file path] — [description of changes made]
 - [...]
 
 Key decisions made:
-- [Decision 1] — Rationale: [why this choice was made]
-- [Decision 2] — Rationale: [why this choice was made]
+- [Decision] — Rationale: [why this choice was made]
 - [...]
 
 Hazards and blockers:
-- [Hazard or blocker 1 — current status and impact]
-- [Hazard or blocker 2 — current status and impact]
+- [Hazard or blocker — current status and impact]
 - [None discovered, if applicable]
 
 Recommended course of action:
@@ -64,7 +57,6 @@ Recommended course of action:
 
 Relief chain:
 - [Previous Ship Name] | [time on station] | [key accomplishment] | [reason for relief]
-- [Previous Ship Name] | [time on station] | [key accomplishment] | [reason for relief]
 - [This is the first ship on this task, if no previous reliefs]
 
 == END TURNOVER BRIEF ==
@@ -72,7 +64,7 @@ Relief chain:
 
 ## Flagship Turnover Brief
 
-When the admiral hands over, append these additional sections after the standard fields. The flagship brief replaces the "Task assignment" section with full squadron state.
+ADM handing over → append these sections after the standard fields; "Task assignment" is replaced by full squadron state.
 
 ```text
 == FLAGSHIP TURNOVER BRIEF ==
@@ -90,17 +82,14 @@ Sailing orders:
 
 Battle plan status:
 - Task [ID]: [name] | Owner: [ship] | Status: [pending/in_progress/completed] | Notes: [brief]
-- Task [ID]: [name] | Owner: [ship] | Status: [pending/in_progress/completed] | Notes: [brief]
 - [...]
 
 Squadron state:
 - [Ship name] ([class]) | Captain [N] | Task: [ID] | Hull: [Green/Amber/Red/Critical] | Status: [active/relieved/stood down]
-- [Ship name] ([class]) | Captain [N] | Task: [ID] | Hull: [Green/Amber/Red/Critical] | Status: [active/relieved/stood down]
 - [...]
 
 Key decisions made:
-- [Decision 1] — Rationale: [why]
-- [Decision 2] — Rationale: [why]
+- [Decision] — Rationale: [why]
 - [...]
 
 Active blockers and risks:
@@ -130,8 +119,8 @@ Recommended course of action:
 
 ## Field Notes
 
-- **Write to file, not message.** The turnover brief is written to disk so the replacement ship can read it without the brief consuming message context. This keeps the replacement's context window clean for actual work.
-- **Be specific in the progress log.** "Implemented the auth module" is insufficient. "Implemented JWT validation in `src/auth/validate.ts` with RS256 signing, added tests in `tests/auth.test.ts` covering expired/malformed/valid tokens" gives the replacement ship enough detail to continue.
-- **Running plot is critical.** The replacement must know exactly what was in flight, not just what was finished. Include file paths, function names, and the specific point where work stopped.
-- **Keep the relief chain bounded.** Each previous relief gets one line. Do not paste previous turnover briefs into the chain — summarize them. If the chain reaches 3 entries, the admiral should re-scope the task rather than adding a fourth.
-- **Flagship briefs copy sailing orders verbatim.** The new admiral session has no memory of the original orders. Copy them in full rather than summarizing.
+- 💾 to file, ¬ message: the replacement reads it from disk, so the brief never consumes message context.
+- Progress log: be specific. ✗ "Implemented the auth module". ✓ "Implemented JWT validation in `src/auth/validate.ts` with RS256 signing, added tests in `tests/auth.test.ts` covering expired/malformed/valid tokens".
+- Running plot ≥1 bullet, critical: exactly what was in flight, ¬ just what finished, with file paths, function names, and the point where work stopped.
+- Relief chain bounded: one line per previous relief, summarised; ✗ paste previous briefs. Chain reaches 3 entries → ADM re-scopes the task rather than adding a fourth.
+- Flagship briefs copy sailing orders verbatim: the new ADM session has no memory of the original orders.

@@ -1,11 +1,7 @@
-# Standing Order: Pressed Crew
+# Standing Order Φ₁₂: Pressed Crew
 
-Do not assign crew members work outside their designated role.
+! Assigning crew work outside their designated role.
 
-**Symptoms:**
-- A Navigating Officer is asked to write implementation code.
-- A PWO is asked to run tests instead of the MEO.
-- A read-only role (NO or COX) is expected to modify files.
-- Crew members produce lower-quality output because they lack the tools or context for the assigned work.
+**Symptoms:** NO asked to write implementation code · PWO asked to run tests instead of MEO · read-only role (NO 🔒 ∨ COX 🔒) expected to modify files · crew output degrades for lack of the tools or context the work needs.
 
-**Remedy:** Each crew role has a defined function and subagent type. Assign sub-tasks that match the role definition in `references/crew-roles.md`. If no crewed role fits the sub-task, the captain should either crew the appropriate role or handle it directly.
+**Remedy:** ∀ crew role has a defined function and subagent type. Assign sub-tasks matching the role definition in `references/crew-roles.md`. No crewed role fits → CPT crews the right role ∨ handles it directly.

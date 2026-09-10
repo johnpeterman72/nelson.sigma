@@ -1,21 +1,10 @@
-# Scuttle and Re-Form: Mission Abort
+# Δ₄ Scuttle and Re-Form: Mission Abort
 
-Use when the mission cannot succeed under current conditions and continuing wastes budget.
+Mission cannot succeed; continuing wastes budget. Triggers: budget (token ∨ time) exhausted, critical tasks pending · outcome unachievable under discovered constraints · ADM judges remaining risk unacceptable.
 
-Triggers:
-- Budget (token or time) is exhausted with critical tasks still pending.
-- Mission outcome is no longer achievable due to discovered constraints.
-- Admiral determines that remaining risk exceeds acceptable threshold.
-
-Procedure:
-
-1. Admiral halts all in-progress work immediately.
-2. Each agent saves current partial outputs and documents their last known state.
-3. Admiral produces an abort log using the Captain's Log Template with:
-   - Reason for abort.
-   - Tasks completed and their outputs.
-   - Tasks abandoned and their partial state.
-   - Conditions required before re-attempting the mission.
-4. Admiral marks all task list entries as `completed` (for finished tasks) or updates their description to note they were abandoned (for incomplete tasks). This ensures the user's Ctrl+T display does not show stale in-progress tasks.
-5. Admiral issues shutdown requests to all agents.
-6. Admiral presents the abort log to the human (Admiralty) with a recommendation: retry with new constraints, descope, or abandon.
+1. ADM halts ∀ work.
+2. ∀ agent saves partial outputs + last state.
+3. Abort log per the Captain's Log Template: reason · tasks done + outputs · tasks abandoned + partial state · conditions before retry.
+4. Task list: done → `completed`; incomplete → description notes abandoned (no stale in-progress in Ctrl+T).
+5. Shutdown requests to ∀ agent.
+6. ⏸ Abort log to Admiralty + recommendation: retry with new constraints ∨ descope ∨ abandon.

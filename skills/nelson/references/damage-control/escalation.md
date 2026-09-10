@@ -1,36 +1,31 @@
-# Escalation: Chain of Command
+# Δ₅ Escalation: Chain of Command
 
-Escalation flows upward: Crew to Captain to Admiral to Admiralty (human).
+Upward: crew → CPT → ADM → Admiralty (human).
 
 ## Triggers
 
-| Trigger | First Action |
-| --- | --- |
-| Ambiguous requirement or acceptance criteria | Captain pauses and requests clarification from admiral |
-| Agent disagreement on approach | Admiral decides; if uncertain, escalates to Admiralty |
-| Scope creep detected (task expanding beyond original definition) | Admiral re-scopes or escalates to Admiralty for approval |
-| Unexpected dependency on out-of-scope system | Admiral pauses dependent work and escalates to Admiralty |
-| Station 2+ risk discovered mid-task | Admiral elevates the action station and applies required controls |
-| Budget approaching limit with critical work remaining | Admiral escalates to Admiralty with options: extend budget, descope, or abort |
-
-> **Note:** The following entry documents a planned, expected handoff — not a failure condition. It is listed here so that any captain encountering this situation without a prior briefing has a defined path.
-
-| Captain has reached a planned human-action step (`admiralty-action-required: yes`) and cannot continue | Captain invokes the `awaiting-admiralty` standing order |
+| Trigger | First action |
+|---|---|
+| Ambiguous requirement ∨ acceptance criteria | CPT pauses, asks ADM |
+| Agents disagree on approach | ADM decides; unsure → Admiralty |
+| Scope creep past the original definition | ADM re-scopes ∨ Admiralty approval |
+| Unexpected out-of-scope dependency | ADM pauses dependent work → Admiralty |
+| Σ₂+ risk found mid-task | ADM raises Σ, applies its controls |
+| Budget near limit, critical work left | ADM → Admiralty: extend ∨ descope ∨ abort |
+| CPT at a planned human-action step (`admiralty-action-required: yes`) | `awaiting-admiralty` standing order (planned, ¬ a failure) |
 
 ## Procedure
 
-1. The agent encountering the issue pauses work on the affected task.
-2. Agent reports to admiral with: issue summary, options considered, and one recommendation.
-3. Admiral evaluates whether the issue can be resolved within current authority:
-   - If yes: admiral decides and documents the rationale.
-   - If no: admiral escalates to Admiralty (human) with a summary and recommendation.
-4. Admiralty provides direction.
-5. Admiral communicates the decision to the affected agent and updates the battle plan.
-6. Agent resumes work under the new direction.
+1. Agent pauses the task.
+2. Reports to ADM: issue, options, one recommendation.
+3. Within ADM authority → decide, record rationale. : → Admiralty with summary + recommendation.
+4. Admiralty directs.
+5. ADM relays, updates the battle plan.
+6. Agent resumes.
 
 ## Authority Boundaries
 
-- **Crew member**: Can resolve issues within their sub-task scope. Must escalate anything affecting other crew members or the ship's deliverable to captain.
-- **Captain**: Can resolve issues within their own task scope. Must escalate anything affecting other tasks, shared resources, or mission scope.
-- **Admiral**: Can re-assign tasks, replace agents, adjust timelines, elevate action stations, and descope within the original sailing orders. Must escalate scope changes, budget extensions, and abort decisions.
-- **Admiralty (human)**: Final authority on scope, budget, and abort. All irreversible or high-blast-radius decisions require Admiralty confirmation.
+- **Crew:** own sub-task. Escalates to CPT: other crew ∨ ship deliverable affected.
+- **CPT:** own task. Escalates: other tasks, shared resources, mission scope.
+- **ADM:** re-assign, replace agents, adjust timelines, raise Σ, descope within the sailing orders. Escalates: scope changes, budget extensions, abort.
+- **Admiralty:** final on scope, budget, abort; confirms ∀ irreversible ∨ high-blast-radius decision.

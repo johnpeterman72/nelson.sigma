@@ -1,15 +1,12 @@
-# Crew Overrun: Ship Budget Recovery
+# Δ₆ Crew Overrun: Ship Budget Recovery
 
-Use when a ship's crew is consuming disproportionate tokens or time relative to its task weight.
+Crew burning tokens ∨ time out of proportion to task weight.
 
-1. Captain pauses all crew activity on the ship.
-2. Captain reviews each crew member's progress against their assigned sub-task and estimated budget.
-3. Captain identifies the source of overrun: scope creep, blocked crew member, or mismatched role assignment.
-4. Captain takes corrective action:
-   - If scope creep: descope the sub-task to its original definition.
-   - If blocked: resolve the blocker or reassign the sub-task to a different crew member.
-   - If role mismatch: reassign the sub-task to the correct role or handle it directly.
-5. Captain resumes crew activity with a revised budget allocation.
-6. If the ship cannot recover within budget, captain escalates to admiral with a summary and recommendation: extend budget, descope the ship's task, or split the remaining work into a second ship.
+1. CPT pauses ∀ crew.
+2. Reviews each against sub-task + budget.
+3. Source: scope creep ∨ blocked ∨ role mismatch.
+4. Creep → descope to the original sub-task · blocked → resolve ∨ reassign · mismatch → correct role ∨ CPT does it.
+5. Resume with a revised budget.
+6. Cannot recover within budget → ADM with summary + recommendation: extend ∨ descope ∨ split to a second ship.
 
-See `damage-control/circuit-breakers.md` for the automated `cost_per_task_overrun` alarm that can catch overruns between captain self-reports.
+Automated `cost_per_task_overrun` alarm: `damage-control/circuit-breakers.md`.

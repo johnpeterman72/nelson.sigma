@@ -1,21 +1,30 @@
 {
-  "name": "nelson-marketplace",
+  "name": "nelson-sigma-marketplace",
   "owner": {
-    "name": "Harry Munro"
+    "name": "John Peterman"
   },
   "metadata": {
-    "description": "Royal Navy agent coordination framework for Claude Code"
+    "description": "Nelson♦Σ — token-compressed Royal Navy agent coordination framework for Claude Code"
   },
   "plugins": [
     {
       "name": "nelson",
-      "description": "Royal Navy agent coordination framework — sailing orders, battle plans, action stations, and a captain's log",
+      "description": "Nelson♦Σ — token-compressed Royal Navy agent coordination framework: sailing orders, battle plans, action stations, and a captain's log, written in symbolic notation",
       "version": "2.4.0",
-      "author": { "name": "Harry Munro" },
+      "author": {
+        "name": "John Peterman"
+      },
       "source": "./",
-      "repository": "https://github.com/harrymunro/nelson",
+      "repository": "https://github.com/johnpeterman72/nelson.sigma",
       "license": "MIT",
-      "keywords": ["agents", "coordination", "teams", "workflow"],
+      "keywords": [
+        "agents",
+        "coordination",
+        "teams",
+        "workflow",
+        "sigma",
+        "token-efficient"
+      ],
       "category": "workflow"
     }
   ]

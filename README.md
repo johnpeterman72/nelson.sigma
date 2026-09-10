@@ -1,14 +1,16 @@
-# Nelson
+# Nelson♦Σ
 
-[![Version](https://img.shields.io/github/v/release/harrymunro/nelson)](https://github.com/harrymunro/nelson/releases)
+[![Version](https://img.shields.io/github/v/release/johnpeterman72/nelson.sigma)](https://github.com/johnpeterman72/nelson.sigma/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-skill-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
-[![Stars](https://img.shields.io/github/stars/harrymunro/nelson)](https://github.com/harrymunro/nelson/stargazers)
+[![Stars](https://img.shields.io/github/stars/johnpeterman72/nelson.sigma)](https://github.com/johnpeterman72/nelson.sigma/stargazers)
 
 **If you believe that what works well for people works well for agents, there's few finer examples of organisational tradition than the Royal Navy to base the rules on. This framework does just that, for Claude Code.**
 
+**Nelson♦Σ** is a token-compressed edition of [Nelson](https://github.com/harrymunro/nelson) by Harry Munro. Same eight-step doctrine, same Python scripts, hooks, and plugin packaging — the skill text is rewritten in the symbolic notation of [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma), so every mission loads fewer tokens. See [Symbolic compression](#symbolic-compression).
+
 <!-- markdownlint-disable-next-line MD036 -->
-*4 risk tiers · 11 damage control procedures · 11 mission templates · 7 crew roles · 16 standing orders*
+*4 risk tiers · 11 damage control procedures · 11 mission templates · 7 crew roles · 17 standing orders · 1 symbol legend*
 
 <p align="center">
   <img src="docs/images/1024px-Young_Nelson-min.jpg" alt="Captain Horatio Nelson" width="500">
@@ -20,6 +22,7 @@
 
 - [Quick Start](#quick-start)
 - [What it does](#what-it-does)
+- [Symbolic compression](#symbolic-compression)
 - [Why Nelson?](#why-nelson)
 - [How it works](#how-it-works)
 - [Prerequisites](#prerequisites)
@@ -29,7 +32,7 @@
 - [Plugin file structure](#plugin-file-structure)
 - [Mission artifacts](#mission-artifacts)
 - [Compatibility notes](#compatibility-notes)
-- [Star History](#star-history)
+- [Credits](#credits)
 - [Disclaimer](#disclaimer)
 - [License](#license)
 
@@ -38,8 +41,8 @@
 Install the plugin:
 
 ```
-/plugin marketplace add harrymunro/nelson
-/plugin install nelson@nelson-marketplace
+/plugin marketplace add johnpeterman72/nelson.sigma
+/plugin install nelson@nelson-sigma-marketplace
 ```
 
 Describe your mission — Nelson loads automatically, no slash command needed:
@@ -64,6 +67,38 @@ Nelson gives Claude an eight-step operational framework for tackling complex mis
 6. **Quarterdeck Rhythm** — Run checkpoints to track progress, identify blockers, monitor hull integrity, and manage budget
 7. **Action Stations** — Classify tasks by risk tier and enforce verification before marking complete
 8. **Stand Down** — Produce a captain's log with decisions, artifacts, validation evidence, and follow-ups
+
+## Symbolic compression
+
+Nelson♦Σ keeps every rule, gate, threshold, command, and template of upstream Nelson and rewrites the prose around them in a compact notation. `SKILL.md` is loaded on every mission; the files under `references/` are loaded on demand, so both matter.
+
+| Symbol | Stands for |
+|---|---|
+| Ω₁ … Ω₈ | the eight workflow steps |
+| Π | engine phase (`SAILING_ORDERS` → … → `STAND_DOWN`) |
+| Μ₁ … Μ₅ | execution mode (single-session, subagents, agent-team, workflow, hybrid-workflow) |
+| Σ₀ 🟢 … Σ₃ 🔴 | action station (risk tier) |
+| Η🟢 Η🟡 Η🔴 Η⚫ | hull integrity (context remaining) |
+| Ε₁ … Ε₇ | the seven Estimate questions |
+| ADM · CPT · RCN · RM | admiral, captain, red-cell navigator, royal marine |
+| Φ · Δ · Τ | standing order, damage-control procedure, template |
+| ND · NP · NCS | the `nelson-data.py`, `nelson-phase.py`, `nelson_conflict_scan.py` commands |
+| ⛔ 📖 💾 ⏸ | hard gate, must read, must write to disk, wait for the human |
+
+The full vocabulary is in [`skills/nelson/references/sigma-legend.md`](skills/nelson/references/sigma-legend.md).
+
+Measured with a byte-pair tokenizer (cl100k as a proxy for Claude's):
+
+| File set | Upstream v2.4.0 | Nelson♦Σ | Saving |
+|---|---|---|---|
+| `SKILL.md` (every mission) | 9,804 | 7,025 | 28% |
+| `references/` (on demand) | 40,854 | 37,447 | 8% |
+
+The references total includes two files that did not exist upstream (the symbol legend and the extracted star-prompt procedure); excluding those, the converted references are 14% smaller. Damage-control procedures compressed 26–41%; templates and table-heavy references barely moved, because field labels, tool names, and JSON keys must stay literal.
+
+Two honest notes. Greek letters and math operators cost about as many tokens as the words they replace, so the saving comes from cutting explanatory prose, not from the glyphs; the script aliases and role abbreviations are the parts that pay for themselves outright. And a byte count overstates the win: unicode symbols are multi-byte, so judge by tokens, not kilobytes.
+
+Everything a Python script parses stays literal — the step headings, the Standing Orders table, turnover-brief labels, battle-plan ownership lines, JSON keys, and every `references/` path — so upstream's hooks, phase engine, conflict scan, and CI checks run unchanged.
 
 ## Why Nelson?
 
@@ -296,8 +331,8 @@ Nelson ships eleven structured templates to keep outputs consistent across missi
 Add the marketplace and install:
 
 ```
-/plugin marketplace add harrymunro/nelson
-/plugin install nelson@nelson-marketplace
+/plugin marketplace add johnpeterman72/nelson.sigma
+/plugin install nelson@nelson-sigma-marketplace
 ```
 
 <details>
@@ -306,7 +341,7 @@ Add the marketplace and install:
 Open Claude Code and say:
 
 ```
-Install skills from https://github.com/harrymunro/nelson
+Install skills from https://github.com/johnpeterman72/nelson.sigma
 ```
 
 Claude will clone the repo, copy the skill into your project's `.claude/skills/` directory, and clean up. To install it globally across all projects, ask Claude to install it to `~/.claude/skills/` instead.
@@ -320,7 +355,7 @@ Clone the repo and copy the skill directory yourself:
 
 ```bash
 # Project-level (recommended for teams)
-git clone https://github.com/harrymunro/nelson.git /tmp/nelson
+git clone https://github.com/johnpeterman72/nelson.sigma.git /tmp/nelson
 mkdir -p .claude/skills
 cp -r /tmp/nelson/skills/nelson .claude/skills/nelson
 rm -rf /tmp/nelson
@@ -338,11 +373,11 @@ Then commit `.claude/skills/nelson/` to version control so your team can use it.
 <details>
 <summary>Updating</summary>
 
-For plugin installs, run `/plugin` and either enable auto-updates on `nelson-marketplace` or trigger an update from the marketplace menu. From the command line:
+For plugin installs, run `/plugin` and either enable auto-updates on `nelson-sigma-marketplace` or trigger an update from the marketplace menu. From the command line:
 
 ```
-/plugin marketplace update nelson-marketplace
-/plugin install nelson@nelson-marketplace
+/plugin marketplace update nelson-sigma-marketplace
+/plugin install nelson@nelson-sigma-marketplace
 ```
 
 If updates aren't taking effect, remove and re-add the marketplace. For manual installs, delete `skills/nelson/` and repeat the manual install.
@@ -365,13 +400,13 @@ You should see `nelson` listed. You can also test it by saying "Use Nelson to...
 <details>
 <summary>Installation for Cursor (Experimental)</summary>
 
-If you have a Team Marketplace in Cursor, you can add Nelson there. See [Add a team marketplace](https://cursor.com/docs/plugins#add-a-team-marketplace) in the Cursor documentation. The required GitHub repository URL is `https://github.com/harrymunro/nelson.git`. Once the marketplace is installed, you can install Nelson from it.
+If you have a Team Marketplace in Cursor, you can add Nelson there. See [Add a team marketplace](https://cursor.com/docs/plugins#add-a-team-marketplace) in the Cursor documentation. The required GitHub repository URL is `https://github.com/johnpeterman72/nelson.sigma.git`. Once the marketplace is installed, you can install Nelson from it.
 
 If you do not have access to a Team Marketplace, you can install locally on Linux and macOS:
 
 ```bash
 cd ~/.cursor/plugins/local
-git clone -b main --depth 1 https://github.com/harrymunro/nelson.git
+git clone -b main --depth 1 https://github.com/johnpeterman72/nelson.sigma.git
 ```
 
 To update the plugin after that:
@@ -449,12 +484,14 @@ hooks/                    # Enforcement hooks (auto-discovered by plugin)
 skills/nelson/
 ├── SKILL.md              # Main skill instructions (entrypoint)
 ├── references/           # Supporting docs loaded on demand
+│   ├── sigma-legend.md           # Symbol legend (read this first)
 │   ├── action-stations.md        # Risk tier definitions
 │   ├── admiralty-templates/      # 11 structured templates
 │   ├── crew-roles.md             # Crew role definitions & ship names
 │   ├── damage-control/           # 11 recovery procedures
 │   ├── goal-alignment.md         # Claude Code /goal (standing goal) doctrine
-│   ├── standing-orders/          # 16 anti-pattern guards
+│   ├── stand-down-star.md        # One-time GitHub star prompt (Stand Down)
+│   ├── standing-orders/          # 17 anti-pattern guards
 │   ├── the-estimate.md           # 7 Question Maritime Tactical Estimate reference
 │   ├── squadron-composition.md   # Mode selection & team sizing
 │   └── workflow-doctrine.md      # Dynamic workflow & ultracode doctrine
@@ -506,12 +543,14 @@ skills/nelson/
 │   │   └── session-resumption.md
 │   ├── model-selection.md                    # Cost-optimized model assignment for agents
 │   ├── royal-marines.md                      # Royal Marines deployment rules
+│   ├── sigma-legend.md                       # Symbol legend for the whole skill
 │   ├── squadron-composition.md               # Mode selection and team sizing rules
+│   ├── stand-down-star.md                    # One-time GitHub star prompt procedure
 │   ├── structured-data.md                    # Structured fleet data capture reference
 │   ├── the-estimate.md                       # 7 Question Maritime Tactical Estimate reference
 │   ├── tool-mapping.md                       # Nelson-to-Claude Code tool reference
 │   ├── workflow-doctrine.md                  # Dynamic workflow and ultracode doctrine
-│   └── standing-orders/                      # Individual anti-pattern files
+│   └── standing-orders/                      # Individual anti-pattern files (17)
 │       ├── admiral-at-the-helm.md
 │       ├── all-hands-on-deck.md
 │       ├── awaiting-admiralty.md
@@ -595,22 +634,16 @@ Nelson is built around **Claude Code orchestration primitives** — shared task 
 
 **Why not degrade gracefully?** Nelson's value is the coordination layer — quarterdeck rhythm, peer messaging, shared task lists, damage control, crew hierarchy. On a platform without agent teams, Nelson would degrade to "subagents with Royal Navy naming", which doesn't justify the complexity. When these platforms add agent-team support, Nelson will follow.
 
-We are actively tracking multi-agent developments across these platforms. If you're interested in helping bring Nelson to a new platform, [open an issue](https://github.com/harrymunro/nelson/issues).
+We are actively tracking multi-agent developments across these platforms. If you're interested in helping bring Nelson to a new platform, [open an issue](https://github.com/johnpeterman72/nelson.sigma/issues).
 
 ### Claude Code specifics
 
 - **Subagents** are a stable Claude Code feature and work out of the box.
 - **Agent teams** are experimental and disabled by default. See [Prerequisites](#prerequisites) above for setup. Without agent teams enabled, Nelson falls back to `single-session` or `subagents` mode. Full details: [Agent teams documentation](https://code.claude.com/docs/en/agent-teams).
 
-## Star History
+## Credits
 
-<a href="https://star-history.com/#harrymunro/nelson&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=harrymunro/nelson&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=harrymunro/nelson&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=harrymunro/nelson&type=Date" width="600" />
- </picture>
-</a>
+Nelson♦Σ is a token-optimised fork of [Nelson](https://github.com/harrymunro/nelson) by [Harry Munro](https://github.com/harrymunro); the doctrine, scripts, hooks, and templates are his. The symbolic notation follows [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma). The Stand Down star prompt still stars the upstream repo, because that is where the framework comes from.
 
 ### How the star prompt works
 

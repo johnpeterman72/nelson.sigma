@@ -1,4 +1,4 @@
-# Quarterdeck Report Template
+# Τ Quarterdeck Report
 
 ```text
 Mission directory:

@@ -1,98 +1,61 @@
 # The Estimate
 
-The analytical phase between Sailing Orders and Battle Plan. Read this when conducting The Estimate.
-
-The Royal Navy's 7 Question Maritime Tactical Estimate drives the thinking that turns a mission brief into a plan worth executing. Nelson the admiral used a version of it to produce his Trafalgar Memorandum — the document that gave every captain enough understanding of his intent to act independently when the signal flags were lost in the smoke.
-
-## Contents
-
-- [The seven questions](#the-seven-questions)
-- [Interactive flow](#interactive-flow)
-- [Checkpoint discipline](#checkpoint-discipline)
-- [Effects, acceptance criteria, and commander's guidance](#effects-acceptance-criteria-and-commanders-guidance)
-- [Adaptive planning — dated addenda](#adaptive-planning--dated-addenda)
-- [Voice and register](#voice-and-register)
-- [Output](#output)
+Ω₂, between Ω₁ and Ω₃. 📖 before conducting it. The Royal Navy's 7 Question Maritime Tactical Estimate: a brief → a plan every CPT can act on independently, as Nelson's Trafalgar Memorandum did.
 
 ## The seven questions
 
-| # | Name | What it answers |
-|---|------|-----------------|
-| 1 | **Reconnaissance** | What is the terrain? What are we working with? |
-| 2 | **Intent** | What are we really trying to achieve, and why? |
-| 3 | **Effects** | What changes must occur to fulfil the intent? |
-| 4 | **Terrain** | Where in the codebase does each effect land? |
-| 5 | **Forces** | What agents, models, and context do we need? |
-| 6 | **Coordination** | What depends on what? What runs in parallel? |
-| 7 | **Control** | Where are the quality gates and intervention points? |
+Ε₁ **Reconnaissance** what is the terrain, what are we working with? · Ε₂ **Intent** what are we really trying to achieve, and why? · Ε₃ **Effects** what changes must occur to fulfil the intent? · Ε₄ **Terrain** where in the codebase does each effect land? · Ε₅ **Forces** what agents, models, and context do we need? · Ε₆ **Coordination** what depends on what, what runs in parallel? · Ε₇ **Control** where are the quality gates and intervention points?
 
-The numbering carries a thought-process, not a form. Short answers for simple missions; deeper analysis for complex ones. Always seven questions.
+A thought-process, not a form: short answers for simple missions, deeper for complex ones. Always seven.
 
 ## Interactive flow
 
-The Estimate is a conversation between admiral and user, not a monologue. Respect the user's time.
+A conversation with the user, not a monologue.
 
-**Q1 — Reconnaissance.** The first question that dispatches sub-agents. Send one or more Explore agents into the codebase with a scouting brief derived from the Sailing Orders. For ambiguous or unfamiliar terrain, dispatch them in parallel with different search targets. Synthesise their reports into a terrain assessment in your own voice. Do not paste raw agent output into the estimate.
+**Ε₁ Reconnaissance.** ≥1 Explore with a scouting brief from the sailing orders; ambiguous ∨ unfamiliar terrain → parallel dispatches, different search targets. Synthesise a terrain assessment in ADM's own voice; ✗ paste raw agent output. Explorer discipline:
 
-**Q1 Explorer discipline:**
-- Default to **multiple focused Explores** rather than one laundry-list dispatch. Each Explore covers one subsystem or one specific question. Ten files or one module is a working ceiling per dispatch.
-- Each Explore brief MUST require a **structured summary** — list of `{file_path, finding, evidence}` or equivalent. Do not request raw file contents; the admiral synthesises across summaries.
-- If only one dispatch is genuinely warranted (small repo, narrow question, single subsystem) and Explore's prompt limits are a concern, use `subagent_type=general-purpose` with an explicit "return a structured summary; do not return raw file contents" instruction.
-- Estimate Explorers inherit the admiral's model. The cost-savings default of haiku for narrow Explorers does not apply during The Estimate (see `references/model-selection.md`).
-- When an Explore fails (prompt-length limit, malformed output, error), apply `references/standing-orders/pulling-the-oar.md`: fix the brief and re-dispatch. Do not absorb the work into the admiral's context.
+- focused Explores (one subsystem ∨ one question each, ≤ ten files ∨ one module per dispatch), ¬ one laundry-list dispatch
+- ∀ brief MUST require a structured summary (`{file_path, finding, evidence}` list or equivalent); ✗ raw file contents; ADM synthesises across summaries
+- ? only one dispatch warranted (small repo, narrow question, single subsystem) ∧ Explore prompt limits a concern → `subagent_type=general-purpose` + explicit "return a structured summary; do not return raw file contents"
+- Explorers inherit ADM's model; the cost-savings haiku default ✗ during Ω₂ (`references/model-selection.md`)
+- Explore fails (prompt-length limit, malformed output, error) → `references/standing-orders/pulling-the-oar.md`: fix the brief, re-dispatch; ✗ absorb into ADM context
 
-**Checkpoint 1 — after Q1.** Present findings to the user:
+**Checkpoint 1 — after Ε₁.** ⏸ *"Here is what I found. Is there anything I have missed? Are there additional constraints I should know?"* ? Ε₁ shows the stated mission will not achieve the user's actual intent → say so plainly, propose a reframing; the user confirms, amends, or overrides. Reframed → amend `sailing-orders.json`, keep the original as context.
 
-> *"Here is what I found. Is there anything I have missed? Are there additional constraints I should know?"*
+**Dispatch 1 — Ε₂ ∧ Ε₃ (Estimate-Drafter).** One subagent. Ε₂ = commander's intent from Ε₁ + sailing orders, one paragraph carried in every CPT brief. Ε₃ = concrete effects, each with commander's guidance ∧ acceptance criteria (below). 💾 briefing → `{mission-dir}/estimate-briefing-1.md` (survives compaction), referenced in the `Agent` prompt:
 
-This is also the natural point for **mission reframing**. If reconnaissance reveals the stated mission will not achieve the user's actual intent, say so plainly and propose a reframing. The user confirms, amends, or overrides. If the mission is reframed, amend `sailing-orders.json` and preserve the original as context.
+- full sailing orders, ¬ summary
+- pointer to `{mission-dir}/estimate.md` (Ε₁ synthesis)
+- output: H2 sections Ε₂ Intent ∧ Ε₃ Effects; voice and register per this file
+- mission directory path
+- user preferences stated in conversation but absent from sailing orders (e.g. "admiral must not implement", "cost-savings enabled"); ADM surfaces these from its own context
+- pointer to `references/the-estimate.md`
 
-**Dispatch 1 — Q2 and Q3 (Estimate-Drafter).** Q2 and Q3 are delegated to a single subagent. Q2 derives the commander's intent from the Q1 reconnaissance and Sailing Orders — one paragraph that will travel with every captain's brief. Q3 decomposes the intent into concrete effects, each carrying commander's guidance and acceptance criteria (see below).
+Subagent appends Ε₂ ∧ Ε₃ to `{mission-dir}/estimate.md`.
 
-The admiral writes the briefing to `{mission-dir}/estimate-briefing-1.md` so it survives compaction, then references it in the `Agent` prompt. Briefing contents:
-- Sailing orders (full content, not just summary).
-- Pointer to `{mission-dir}/estimate.md` containing the Q1 reconnaissance synthesis.
-- Output requirements: H2 sections for Q2 (Intent) and Q3 (Effects); voice and register from this document.
-- Mission directory path so the subagent writes to the correct file.
-- User-stated preferences captured in conversation but not in sailing orders (e.g. "admiral must not implement", "cost-savings enabled"). The admiral surfaces these from its own context — they are the gap formal sailing orders typically miss.
-- Pointer to this file (`references/the-estimate.md`) for thought-process detail.
+**Checkpoint 2 — after Ε₃.** ⏸ *"Here is what I believe needs to happen and why. Does this match your understanding?"* The substantive gate: *what* approved before *how* is planned.
 
-The subagent appends Q2 and Q3 sections to `{mission-dir}/estimate.md`.
+**Dispatch 2 — Ε₄–Ε₇ (Estimate-Planner).** Second subagent reads approved Ε₁–Ε₃ from `{mission-dir}/estimate.md` → Terrain, Forces, Coordination, Control: ADM's judgement on execution. 💾 `{mission-dir}/estimate-briefing-2.md`:
 
-**Checkpoint 2 — after Q3.** Present intent and effects to the user:
+- pointer to `{mission-dir}/estimate.md` (approved Ε₁–Ε₃)
+- output: H2 sections Ε₄–Ε₇; voice and register per this file
+- mission directory path
+- user preferences stated in conversation but absent from sailing orders
+- pointer to this file
 
-> *"Here is what I believe needs to happen and why. Does this match your understanding?"*
+Appends Ε₄–Ε₇ to `{mission-dir}/estimate.md` → ADM presents the complete estimate.
 
-This is the substantive gate — the user is approving *what* will be done before you plan *how*.
+**Model inheritance.** Both subagents omit `model:` on `Agent` → ADM's model, even under cost-savings (`references/model-selection.md`).
 
-**Dispatch 2 — Q4 through Q7 (Estimate-Planner).** A second subagent reads the approved Q1–Q3 sections from `{mission-dir}/estimate.md` and produces Terrain (Q4), Forces (Q5), Coordination (Q6), and Control (Q7) — the admiral's professional judgement about execution.
-
-Briefing contents (`{mission-dir}/estimate-briefing-2.md`):
-- Pointer to `{mission-dir}/estimate.md` containing approved Q1–Q3 sections.
-- Output requirements: H2 sections for Q4–Q7; voice and register from this document.
-- Mission directory path so the subagent appends to the correct file.
-- User-stated preferences captured in conversation but not in sailing orders.
-- Pointer to this file for thought-process detail.
-
-The subagent appends Q4–Q7 sections to `{mission-dir}/estimate.md`. The admiral then presents the complete estimate for final review.
-
-**Model inheritance.** Both Estimate subagents omit the `model:` parameter on the `Agent` tool call — they inherit the admiral's model. This holds even when sailing orders specify cost-savings, per `references/model-selection.md`.
-
-**Final review.** Present the complete estimate. The user approves, requests amendments, or overrides specific questions. On approval, advance the phase from `ESTIMATE` to `BATTLE_PLAN`.
+**Final review.** ⏸ approve, amend, or override specific questions. Approved → `ESTIMATE` ⟶ `BATTLE_PLAN`.
 
 ## Checkpoint discipline
 
-Checkpoints are *available*, not *mandatory*. Collapse to a single end-of-estimate review when **all three** conditions hold:
-
-1. The Sailing Orders specify outcome, metric, and deadline.
-2. Reconnaissance (Q1) reveals no surprises requiring reframing.
-3. The work lands in a single subsystem or file.
-
-Outside that narrow case, the two-checkpoint flow is the default. If in doubt, checkpoint.
+Checkpoints are *available*, not *mandatory*. Collapse to one end-of-estimate review only when all three hold: sailing orders specify outcome ∧ metric ∧ deadline · Ε₁ reveals no surprises requiring reframing · work lands in a single subsystem ∨ file. Otherwise two checkpoints; in doubt → checkpoint.
 
 ## Effects, acceptance criteria, and commander's guidance
 
-Each effect in the Effects section (Q3) carries three elements:
+∀ effect in Ε₃ carries three elements:
 
 ```markdown
 ### Effect: Replace session auth with JWT signing
@@ -109,19 +72,13 @@ Lands on `src/auth/session.ts`. High complexity.
 - Token payload contains only `sub`, `iat`, `exp` claims
 ```
 
-- **The effect** states what must change (outcome-focused).
-- **Commander's guidance** states how it should be done — library choices, patterns, design decisions. Specific enough to prevent wrong turns, loose enough to allow professional judgement.
-- **Acceptance criteria** state what must be true when the effect is complete. Each criterion must have an appropriate verification method: existing test suites, type-checkers, linters, review agents, and visual inspection are all valid. Not every criterion demands a new unit test.
+**Effect** = what must change, outcome-focused. **Commander's guidance** = how (libraries, patterns, design decisions): specific enough to prevent wrong turns, loose enough for professional judgement. **Acceptance criteria** = what must be true when complete; ∀ criterion has a verification method: existing tests, type-checkers, linters, review agents, visual inspection are all valid, ¬ every criterion needs a new unit test.
 
-Acceptance criteria flow through the pipeline:
-
-1. **Battle Plan** — each task inherits the criteria of its parent effect.
-2. **Captains** — know what "done" looks like before writing a line of code. They pick the appropriate verification method per criterion.
-3. **Quarterdeck** — verifies every criterion and records both outcome (`pass` / `fail` / `not-verified`) and method used via `nelson-data.py estimate-outcome`.
+Flow: Ω₃ ∀ task inherits its parent effect's criteria → CPTs know "done" before coding and pick the method per criterion → Ω₆ verifies ∀ criterion, records outcome (`pass` / `fail` / `not-verified`) ∧ method via `ND estimate-outcome`.
 
 ## Adaptive planning — dated addenda
 
-The Estimate is a living document, not a contract. When you or a captain encounter something that contradicts the estimate — a file more complex than expected, a dependency not apparent, an approach that proves unworkable — amend the relevant section with a dated addendum:
+A living document, not a contract. ADM ∨ CPT meets a contradiction (unexpected complexity, hidden dependency, unworkable approach) → dated addendum to the relevant section; original reasoning stays visible, correction explicit, downstream plans adjust:
 
 ```markdown
 ## Addendum — 14:32
@@ -132,15 +89,13 @@ Effects revised: the original signing effect now splits into two.
 Coordination updated accordingly.
 ```
 
-The original reasoning stays visible. The course correction is explicit. Downstream plans adjust.
-
 ## Voice and register
 
-Write as a capable officer briefing peers. Concise but never terse. Clear but never flat. Confident but never glib. Cross-references between questions use natural prose, not IDs or schemas — the Battle Plan step reads the estimate in context, and it is the same admiral reading its own work.
+A capable officer briefing peers: concise never terse, clear never flat, confident never glib. Cross-references between questions in natural prose, ¬ IDs or schemas: Ω₃ is the same ADM reading its own work.
 
 ## Output
 
-A single markdown file, `{mission-dir}/estimate.md`, with one H2 section per question:
+💾 `{mission-dir}/estimate.md`, one H2 per question:
 
 ```
 {mission-dir}/estimate.md
@@ -153,6 +108,4 @@ A single markdown file, `{mission-dir}/estimate.md`, with one H2 section per que
   ## 7. Control
 ```
 
-If a section grows unwieldy during a complex mission, split it into its own file at `{mission-dir}/estimate/0N-name.md` and leave a prose pointer in the parent. The default is one file — splitting is the exception, not the rule.
-
-See `admiralty-templates/estimate.md` for the skeleton to work from.
+Unwieldy section → split to `{mission-dir}/estimate/0N-name.md` with a prose pointer in the parent; one file is the default. Skeleton: `admiralty-templates/estimate.md`.

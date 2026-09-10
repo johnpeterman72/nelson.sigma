@@ -1,6 +1,6 @@
-# Estimate Template
+# Τ Estimate
 
-Light scaffolding — the admiral writes prose, not forms. See `references/the-estimate.md` for the thought process behind each section.
+Light scaffolding: ADM writes prose, ¬ forms. Thought process per section: `references/the-estimate.md`.
 
 ```markdown
 # The Estimate — {mission title}
@@ -52,9 +52,9 @@ Light scaffolding — the admiral writes prose, not forms. See `references/the-e
 - Rollback plan
 ```
 
-**Notes for the admiral:**
+Notes for ADM:
 
-- One H2 per question. Write in prose; bullets are a fallback, not a default.
-- Each effect in §3 must carry commander's guidance and at least one acceptance criterion.
-- Cross-reference sections naturally ("the auth effect from §3", not "Effect AC-1").
-- Addenda (dated, appended under the relevant section) are how the estimate evolves — do not rewrite history.
+- One H2 per question. Prose; bullets are a fallback, ¬ a default.
+- ∀ effect in §3 carries commander's guidance ∧ ≥1 acceptance criterion.
+- Cross-reference naturally ("the auth effect from §3", ¬ "Effect AC-1").
+- The estimate evolves by dated addenda appended under the relevant section; ✗ rewrite history.

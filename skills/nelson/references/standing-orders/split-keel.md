@@ -1,10 +1,7 @@
-# Standing Order: Split Keel
+# Standing Order Φ₄: Split Keel
 
-Do not assign the same file to multiple captains.
+! Assigning one file to multiple CPTs.
 
-**Symptoms:**
-- Captains overwrite each other's changes.
-- Frequent merge conflicts on the same artifact.
-- Admiral spends coordination time reconciling divergent edits.
+**Symptoms:** CPTs overwrite each other's changes · frequent merge conflicts on one artifact · ADM spends coordination time reconciling divergent edits.
 
-**Remedy:** Assign exclusive file ownership in the battle plan. If two tasks must touch the same file, serialize them or split the file into independent modules first.
+**Remedy:** exclusive file ownership in the battle plan. Two tasks must touch one file → serialise them ∨ split the file into independent modules first.

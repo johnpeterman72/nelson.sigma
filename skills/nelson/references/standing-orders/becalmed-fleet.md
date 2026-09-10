@@ -1,10 +1,7 @@
-# Standing Order: Becalmed Fleet
+# Standing Order Φ₁: Becalmed Fleet
 
-Do not create an agent team for work that is mostly linear and sequential.
+! Forming an agent team for work that is mostly linear and sequential.
 
-**Symptoms:**
-- Captains idle waiting on a single predecessor task.
-- Token budget burns on coordination overhead with no parallel throughput gain.
-- Tasks form a long chain with no independent branches.
+**Symptoms:** CPTs idle waiting on a single predecessor task · token budget burns on coordination overhead with no parallel throughput gain · tasks form a long chain with no independent branches.
 
-**Remedy:** Use `single-session` mode. Only form a squadron when at least two tasks can run concurrently.
+**Remedy:** use Μ₁ `single-session`. Form a squadron only when ≥2 tasks can run concurrently.

@@ -1,67 +1,64 @@
 # Squadron Composition Reference
 
-Use this file to choose execution mode and team size.
+Choose Μ and team size at Ω₄.
 
 ## Mode Selection
 
-**User preference override:** If the user explicitly requests a specific execution mode (e.g., "use agent teams"), that request MUST be honoured. User preference takes priority over the decision matrix below. Do not second-guess or override the user's choice.
+**User preference override:** user explicitly requests a mode (e.g. "use agent teams") → ⛔ honour it. User preference beats the matrix below; ✗ second-guess or override.
 
-Evaluate all five conditions and select the best fit. When two modes could apply, prefer the one that gives captains more autonomy while preserving required human gates.
+Evaluate all five; pick the best fit. Two apply → prefer the one giving CPTs more autonomy while preserving required human gates.
 
-- `single-session`: Work is sequential, tightly coupled, or mostly in the same files.
-- `subagents`: Work is parallel and each captain's task is fully independent — no shared coordination surface needed.
-- `agent-team`: Work is parallel and captains benefit from a shared task list, peer messaging, or coordinated deliverables. Also use when 4+ captains are needed, or when the user requests it.
-- `workflow`: Work is a single approved dynamic workflow run with large fan-out, repeatable review or migration logic, codebase-wide audit scope, or cross-checked research. Treat the workflow as one fleet asset, not as ordinary captains.
-- `hybrid-workflow`: Work is a Nelson-gated sequence of workflow stages. Use when a probe, Station 2/3 sign-off, or human approval is required between workflow runs.
+- Μ₁ `single-session`: sequential ∨ tightly coupled ∨ mostly the same files
+- Μ₂ `subagents`: parallel ∧ ∀ CPT task fully independent; no shared coordination surface needed
+- Μ₃ `agent-team`: parallel ∧ CPTs benefit from a shared task list ∨ peer messaging ∨ coordinated deliverables. Also ≥4 CPTs ∨ user requests it
+- Μ₄ `workflow`: one approved dynamic workflow run with large fan-out ∨ repeatable review or migration logic ∨ codebase-wide audit ∨ cross-checked research. The workflow = one fleet asset, ¬ ordinary CPTs
+- Μ₅ `hybrid-workflow`: Nelson-gated sequence of workflow stages; a probe ∨ Σ₂/Σ₃ sign-off ∨ human approval is required between runs
 
 ## Decision Matrix
 
 | Condition | Preferred Mode | Why |
-| --- | --- | --- |
-| Single critical path, low ambiguity | `single-session` | Lowest coordination overhead |
-| Parallel, fully independent tasks | `subagents` | Independent tasks with no cross-captain dependencies |
-| Parallel implementation with dependencies | `agent-team` | Supports teammate-to-teammate coordination |
-| 4+ parallel captains | `agent-team` | Shared task list simplifies coordination at scale |
-| High threat or high blast radius | `agent-team` + red-cell navigator | Adds explicit control points |
-| Large repeatable audit, migration, or research fan-out | `workflow` | Dynamic workflow scripts can orchestrate many agents and aggregate results |
-| Workflow-suitable mission with stage gates or Station 2/3 approvals | `hybrid-workflow` | Human approval happens between separate workflow runs |
-| User explicitly requests a mode | As requested | User preference overrides the matrix |
+|---|---|---|
+| single critical path, low ambiguity | `single-session` | lowest coordination overhead |
+| parallel, fully independent tasks | `subagents` | no cross-CPT dependencies |
+| parallel implementation with dependencies | `agent-team` | teammate-to-teammate coordination |
+| ≥4 parallel CPTs | `agent-team` | shared task list simplifies coordination at scale |
+| high threat ∨ high blast radius | `agent-team` + RCN | explicit control points |
+| large repeatable audit, migration, or research fan-out | `workflow` | dynamic workflow scripts orchestrate many agents and aggregate results |
+| workflow-suitable mission with stage gates ∨ Σ₂/Σ₃ approvals | `hybrid-workflow` | human approval between separate workflow runs |
+| user explicitly requests a mode | as requested | user preference overrides the matrix |
 
-Before selecting `workflow` or `hybrid-workflow`, read `workflow-doctrine.md` and record the workflow suitability, probe, verification contract, cost guardrail, and fallback mode in the battle plan. Nelson v1 produces a workflow charter; it does not directly generate or launch `.claude/workflows/*.js`.
+Before Μ₄|Μ₅ → 📖 `workflow-doctrine.md`; record workflow suitability, probe, verification contract, cost guardrail, and fallback mode in the battle plan. Nelson v1 produces a workflow charter; it does not generate or launch `.claude/workflows/*.js`.
 
 ## Team Sizing
 
-The right number of captains equals the number of independently executable work units — not a complexity tier. Before choosing a number, map the dependency graph and count how many tasks can run concurrently with zero shared state. That count is the target.
+CPT count = number of independently executable work units, ¬ a complexity tier. Map the dependency graph; count tasks that can run concurrently with zero shared state; that count is the target.
 
-**Zero shared state** means: no file ownership overlap AND no sequencing dependency (task B does not require the output of task A). Peer coordination across module boundaries (e.g., agreeing on an API contract) is permitted and handled by the admiral.
+**Zero shared state** = no file-ownership overlap ∧ no sequencing dependency (task B does not need task A's output). Peer coordination across module boundaries (e.g. agreeing an API contract) is permitted and handled by ADM.
 
-- Assign one captain per independent work unit.
-- Only merge tasks onto one captain when they share files, have a sequencing dependency, or are so small that agent setup cost clearly exceeds the work itself.
-- Add `1 red-cell navigator` at medium/high threat.
-- Keep one admiral only.
-- Squadron cap: 10 squadron-level agents (admiral, captains, red-cell navigator). Crew are additional — up to 4 per captain, governed by `references/crew-roles.md`.
+- 1 CPT per independent work unit
+- merge tasks onto one CPT only when they share files ∨ have a sequencing dependency ∨ are so small that agent setup cost clearly exceeds the work
+- medium/high threat → +1 RCN
+- exactly one ADM
+- squadron cap: 10 squadron-level agents (ADM, CPTs, RCN). Crew are additional, ≤4 per CPT, per `references/crew-roles.md`
 
-An analysis mission with 8 independent sections warrants 8 captains. An implementation mission with 3 independent modules warrants 3. When in doubt, add a captain — idle context is cheap; serialized work is slow. In cost-optimized missions (sailing orders with token-budget priority), consult `references/model-selection.md` before defaulting to maximum parallelism.
+8 independent analysis sections → 8 CPTs; 3 independent modules → 3. In doubt → add a CPT: idle context is cheap, serialised work is slow. Cost-optimised mission (token-budget priority in sailing orders) → 📖 `references/model-selection.md` before defaulting to maximum parallelism.
 
 ## Role Guide
 
-- `admiral`: Defines sailing orders, delegates, tracks dependencies, resolves blockers. May perform read-only recombination of completed ship outputs once all ships have reported successfully, but MUST NOT perform generative synthesis directly — assign a captain or dedicate a synthesis task for that.
-- `captain`: Commands a ship. Breaks task into sub-tasks, coordinates crew, verifies outputs. Implements directly only when the task is atomic (0 crew). Initial crew composition is set by the admiral at formation; captains may request mid-task adjustments with admiral approval.
-  - Crew roles: Executive Officer (XO), Principal Warfare Officer (PWO), Navigating Officer (NO), Marine Engineering Officer (MEO), Weapon Engineering Officer (WEO), Logistics Officer (LOGO), Coxswain (COX). See `references/crew-roles.md` for role definitions and crewing rules.
-- `red-cell navigator`: Challenges assumptions, validates outputs, checks rollback readiness.
+- ADM: sailing orders, delegation, dependency tracking, blocker resolution. May perform read-only recombination of completed ship outputs once ∀ ships have reported successfully; ✗ generative synthesis directly → assign a CPT or a dedicated synthesis task
+- CPT: commands a ship; breaks the task into sub-tasks, coordinates crew, verifies outputs. Implements directly only when atomic (0 crew). ADM sets initial crew at Ω₄; CPT may request mid-task adjustments with ADM approval. Crew roles XO PWO NO MEO WEO LOGO COX and crewing rules: `references/crew-roles.md`
+- RCN: challenges assumptions, validates outputs, checks rollback readiness
 
 ## Anti-Patterns
 
-See the Standing Orders table in SKILL.md for the full list of standing orders and known anti-patterns.
+Full list: Standing Orders table in SKILL.md.
 
 ## Worktree Isolation
 
-When file ownership boundaries are hard to draw or multiple captains must modify overlapping files, use `isolation: "worktree"` on the `Agent` tool. This gives each captain an isolated copy of the repository via a git worktree.
+File-ownership boundaries hard to draw ∨ several CPTs must modify overlapping files → `isolation: "worktree"` on `Agent`: ∀ CPT gets an isolated copy of the repository via a git worktree. A stronger alternative to file ownership per `standing-orders/split-keel.md`. Use when:
 
-Worktree isolation is a stronger alternative to the file-ownership approach in `standing-orders/split-keel.md`. Use it when:
+- several CPTs need to edit the same files
+- merge-conflict risk is high ∧ split-keel cannot resolve it
+- tasks are large enough to justify the merge cost
 
-- Multiple captains need to edit the same files.
-- Merge conflict risk is high and the split-keel standing order cannot resolve it.
-- Tasks are large enough that the merge cost is justified.
-
-**Trade-off:** Worktree isolation prevents conflicts during execution but requires merging changes afterward. The admiral is responsible for coordinating the merge.
+**Trade-off:** prevents conflicts during execution but requires merging afterwards. ADM coordinates the merge.

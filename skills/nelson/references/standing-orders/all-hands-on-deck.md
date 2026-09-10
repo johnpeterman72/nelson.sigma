@@ -1,11 +1,7 @@
-# Standing Order: All Hands on Deck
+# Standing Order Φ₁₀: All Hands on Deck
 
-Do not crew every role when the task does not require it.
+! Crewing every role when the task does not need it.
 
-**Symptoms:**
-- Ship musters 4 crew for a task that needs only a PWO.
-- Crew members with no meaningful sub-task sit idle or invent busywork.
-- Token budget burns on coordination overhead that exceeds the work itself.
-- Captain spends more time briefing and reviewing crew than the task warrants.
+**Symptoms:** ship musters 4 crew for a task needing only a PWO · crew with no meaningful sub-task idle or invent busywork · coordination overhead burns more tokens than the work · CPT briefs and reviews crew longer than the task warrants.
 
-**Remedy:** Crew only the roles the task demands. Start with a PWO and add specialists only when there is a concrete sub-task that matches their role definition. Refer to the crew sizing table in `references/crew-roles.md`.
+**Remedy:** crew only the roles the task demands. Start with a PWO; add a specialist only for a concrete sub-task matching their role definition. Crew sizing table: `references/crew-roles.md`.

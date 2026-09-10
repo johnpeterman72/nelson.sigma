@@ -1,61 +1,56 @@
 # Royal Marines
 
-Royal Marines are short-lived sub-agents a captain deploys for focused, independent objectives in service of the ship's task. They are doctrinally distinct from crew: crew subdivide the ship's deliverable, marines execute discrete sorties and return.
+RM = short-lived sub-agents a CPT deploys for focused, independent objectives in service of the ship's task. Doctrinally distinct from crew: crew subdivide the ship's deliverable; marines execute discrete sorties and return.
 
-## Deploy-or-Escalate Decision
-
-Choose the first condition that matches.
+## Deploy-or-Escalate Decision (first match wins)
 
 1. Quick recon of unfamiliar area → **Recce Marine**
-2. Targeted fix or small implementation to unblock ship → **Assault Marine**
+2. Targeted fix ∨ small implementation to unblock the ship → **Assault Marine**
 3. Quick config/build/infra task → **Sapper**
-4. Sustained work, own deliverable, needs file ownership → **NOT a marine.** Request a new ship from the admiral.
-5. Work that subdivides the ship's main deliverable → **NOT a marine.** Crew the role instead.
+4. Sustained work ∨ own deliverable ∨ needs file ownership → **¬ marine**: request a new ship from ADM
+5. Work that subdivides the ship's main deliverable → **¬ marine**: crew the role instead
 
 ## Marine Specialisations
 
 | Type | Function | subagent_type | cost-weight | Use case |
 |---|---|---|---|---|
-| Recce Marine | Reconnaissance & intel gathering | Explore (read-only) | 4 | Scout unfamiliar code, gather findings |
-| Assault Marine | Direct action, targeted changes | general-purpose | 3 | Small fix, unblock a dependency |
-| Sapper | Engineering support | general-purpose | 3 | Quick config, build, infra task |
+| Recce Marine 🔒 | reconnaissance & intel gathering | Explore (read-only) | 4 | scout unfamiliar code, gather findings |
+| Assault Marine | direct action, targeted changes | general-purpose | 3 | small fix, unblock a dependency |
+| Sapper | engineering support | general-purpose | 3 | quick config, build, infra task |
 
-### Read-Only Specialisation
-
-Recce Marines use the `Explore` subagent type. They cannot modify files. They report findings to the captain, who decides how to act on them.
+🔒 Recce Marines use the `Explore` subagent type: cannot modify files; report findings to the CPT, who decides how to act.
 
 ## Deployment Rules
 
-- **Max 2 marines per ship at any time.** If the task needs more, it is crew work or a new ship.
-- **Marines cannot deploy marines.** No recursion permitted.
-- **Marines report only to their deploying captain.** They do not communicate with crew or other ships.
-- **Captain must verify marine output** before incorporating it into the ship's deliverable.
-- **Marines do not get ship names.** Identify them as: `RM Detachment, HMS [Ship] — [objective]`.
+- ≤2 marines per ship at any time. More needed → crew work ∨ a new ship
+- marines ✗ deploy marines; no recursion
+- marines report only to their deploying CPT; ✗ communicate with crew or other ships
+- CPT MUST verify marine output before incorporating it into the ship's deliverable
+- no ship names; identify as `RM Detachment, HMS [Ship] — [objective]`
 
 ## Action Station Interaction
 
-Marine deployments inherit the parent ship's station tier:
+RM inherit the parent ship's Σ:
 
-- **Station 0-1:** Captain deploys at discretion. No admiral approval required.
-- **Station 2:** Captain must signal admiral and receive approval before deploying marines.
-- **Station 3:** Marine deployment is not permitted. All Trafalgar-tier work requires explicit Admiralty (human) confirmation.
+- Σ₀–Σ₁ → CPT deploys at discretion; no ADM approval
+- Σ₂ → CPT signals ADM ∧ receives approval before deploying
+- Σ₃ → ✗ no marines; all Trafalgar-tier work needs explicit Admiralty (human) confirmation
 
 ## Recovery
 
-Marine recovery is simple. No separate damage-control procedure is needed.
+No separate damage-control procedure.
 
-- If a marine is stuck or unresponsive, captain **abandons the deployment**.
-- Captain either redeploys a fresh marine or handles the objective directly.
-- If the same marine objective fails twice, captain **escalates to admiral**.
+- marine stuck ∨ unresponsive → CPT abandons the deployment → redeploys a fresh marine ∨ handles the objective directly
+- same objective fails twice → CPT escalates to ADM
 
 ## Model Assignment
 
-The deploying captain applies the same weight-based model judgment the admiral uses for squadron agents. The default weight for a Royal Marine is 3, but adjust before assigning:
+Deploying CPT applies the same weight-based judgement ADM uses for squadron agents. Default RM weight 3; adjust before assigning:
 
-- Raise weight when the objective requires judgment, interpretation, or navigating unfamiliar territory.
-- Lower weight when the objective is fully specified and purely mechanical.
+- raise: objective needs judgement, interpretation, or navigating unfamiliar territory
+- lower: objective fully specified ∧ purely mechanical
 
-If the adjusted weight is ≤ 4 (or cost-savings mode is active), assign haiku and apply the haiku briefing enhancements and tasking discipline from `references/model-selection.md`. Do not assign haiku and then write a vague brief — the two requirements go together.
+Adjusted weight ≤4 (∨ cost-savings mode active) → haiku + the haiku briefing enhancements and tasking discipline from `references/model-selection.md`. ✗ assign haiku then write a vague brief: the two requirements go together.
 
 ## Deployment Template
 
