@@ -131,17 +131,17 @@ What is genuinely lost: deterministic enforcement (a hook can reject a task mark
 
 ## Symbolic compression
 
-Every rule, gate, threshold, and template survives; the prose around them is cut and recurring phrases become symbols: Ω₁–Ω₈ for the steps, Μ₁–Μ₄ for modes, Σ₀–Σ₃ for risk tiers, Ε₁–Ε₇ for the Estimate questions, ADM CPT RCN RM for roles, Φ and Δ for orders and procedures, ⛔ 📖 💾 ⏸ for gates. The vocabulary is in [`skills/nelson/references/sigma-legend.md`](skills/nelson/references/sigma-legend.md).
+Every rule, gate, threshold, and template survives; the prose around them is cut, structure is written as arrays (`Τ_log = [summary{…}, artifacts[{artifact, location}], …]`, checklists and procedures as ordered lists, role tables as tuples), and recurring phrases become symbols: Ω₁–Ω₈ for the steps, Μ₁–Μ₄ for modes, Σ₀–Σ₃ for risk tiers, Ε₁–Ε₇ for the Estimate questions, ADM CPT RCN RM for roles, Φ and Δ for orders and procedures, ⛔ 📖 💾 ⏸ for gates. The vocabulary is in [`skills/nelson/references/sigma-legend.md`](skills/nelson/references/sigma-legend.md).
 
 Measured with a byte-pair tokenizer (cl100k as a proxy for Claude's):
 
 | File set | Upstream v2.4.0 | Nelson♦Σ | Saving |
 |---|---|---|---|
-| `SKILL.md` (loads every mission) | 9,804 | 3,549 | 64% |
-| `references/` (loaded on demand) | 40,854 | 12,079 | 70% |
-| whole skill | 50,658 | 15,628 | 69% |
+| `SKILL.md` (loads every mission) | 9,804 | 3,111 | 68% |
+| `references/` (loaded on demand) | 40,854 | 11,486 | 72% |
+| whole skill | 50,658 | 14,597 | 71% |
 
-An honest note: the glyphs themselves are not where the saving comes from. Greek letters and math operators cost about as many tokens as the words they replace. The saving comes from cutting explanatory prose, consolidating seventeen files into six, dropping the 10,000-token CLI reference the scripts needed, and abbreviating the roles and gates. Judge by tokens, never by kilobytes: symbols are multi-byte.
+An honest note: the glyphs themselves are not where the saving comes from. Greek letters and math operators cost about as many tokens as the words they replace. The saving comes from cutting explanatory prose, consolidating seventeen files into six, dropping the 10,000-token CLI reference the scripts needed, abbreviating the roles and gates, and writing structure as arrays. Arrays earned a further 7% on top of the rewrite: they pay where structure dominates (checklists, field lists, tables) and are neutral where every item carries a clause. Judge by tokens, never by kilobytes: symbols are multi-byte.
 
 ## Prerequisites
 
