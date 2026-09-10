@@ -4,13 +4,13 @@
     "name": "John Peterman"
   },
   "metadata": {
-    "description": "Nelson♦Σ — token-compressed Royal Navy agent coordination framework for Claude Code"
+    "description": "Nelson♦Σ — zero-dependency Royal Navy agent coordination framework for Claude Code"
   },
   "plugins": [
     {
       "name": "nelson",
-      "description": "Nelson♦Σ — token-compressed Royal Navy agent coordination framework: sailing orders, battle plans, action stations, and a captain's log, written in symbolic notation",
-      "version": "2.4.0",
+      "description": "Nelson♦Σ — zero-dependency Royal Navy agent coordination framework: sailing orders, battle plans, action stations, and a captain's log, in symbolic notation on native Claude Code tools",
+      "version": "3.0.0",
       "author": {
         "name": "John Peterman"
       },
@@ -23,7 +23,7 @@
         "teams",
         "workflow",
         "sigma",
-        "token-efficient"
+        "zero-dependency"
       ],
       "category": "workflow"
     }

@@ -51,6 +51,6 @@ Spawn CPTs for Σ₂|Σ₃ tasks with `mode: "plan"` on `Agent`: read-only until
 
 Tool details: `references/tool-mapping.md`.
 
-## Advanced: TaskCompleted Hook
+## Enforcement
 
-`hooks/hooks.json` ships a `TaskCompleted` hook that enforces these gates deterministically: it checks validation evidence, rollback notes, failure cases, and red-cell review by tier, and exits 2 with specific feedback to reject an incomplete task. It supplements, not replaces, the ADM's quarterdeck checkpoint and red-cell review.
+⛔ No task executes without a tier (Φ₆). ADM enforces the controls at Ω₇: a task is not `completed` until its tier's evidence is in hand, and the Ω₆ checkpoint records any task that slipped through. There is no hook; the gate is the admiral's discipline, backed by the RCN at Σ₂+ and the human at Σ₃.

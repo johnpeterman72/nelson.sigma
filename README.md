@@ -3,14 +3,13 @@
 [![Version](https://img.shields.io/github/v/release/johnpeterman72/nelson.sigma)](https://github.com/johnpeterman72/nelson.sigma/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-skill-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
-[![Stars](https://img.shields.io/github/stars/johnpeterman72/nelson.sigma)](https://github.com/johnpeterman72/nelson.sigma/stargazers)
 
-**If you believe that what works well for people works well for agents, there's few finer examples of organisational tradition than the Royal Navy to base the rules on. This framework does just that, for Claude Code.**
+**If what works well for people works well for agents, there are few finer examples of organisational tradition than the Royal Navy to base the rules on. Nelson♦Σ does that for Claude Code, in one skill, with no code.**
 
-**Nelson♦Σ** is a token-compressed edition of [Nelson](https://github.com/harrymunro/nelson) by Harry Munro. Same eight-step doctrine, same Python scripts, hooks, and plugin packaging — the skill text is rewritten in the symbolic notation of [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma), so every mission loads fewer tokens. See [Symbolic compression](#symbolic-compression).
+Nelson♦Σ is a zero-dependency edition of [Nelson](https://github.com/harrymunro/nelson) by Harry Munro. It keeps the eight-step doctrine, the risk tiers, the anti-pattern guards, and the recovery playbook. It drops the Python scripts and hooks, because Claude Code now provides what they did: a task list, plan mode, worktree isolation, background agents, standing goals, and memory. The skill text is written in the symbolic notation of [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma).
 
 <!-- markdownlint-disable-next-line MD036 -->
-*4 risk tiers · 11 damage control procedures · 11 mission templates · 7 crew roles · 17 standing orders · 1 symbol legend*
+*8 steps · 4 execution modes · 4 risk tiers · 6 standing orders · 4 damage-control procedures · 9 files · 0 scripts*
 
 <p align="center">
   <img src="docs/images/1024px-Young_Nelson-min.jpg" alt="Captain Horatio Nelson" width="500">
@@ -22,143 +21,58 @@
 
 - [Quick Start](#quick-start)
 - [What it does](#what-it-does)
-- [Symbolic compression](#symbolic-compression)
-- [Why Nelson?](#why-nelson)
 - [How it works](#how-it-works)
+- [Why no scripts](#why-no-scripts)
+- [Symbolic compression](#symbolic-compression)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Customisation](#customisation)
-- [Plugin file structure](#plugin-file-structure)
+- [File structure](#file-structure)
 - [Mission artifacts](#mission-artifacts)
-- [Compatibility notes](#compatibility-notes)
 - [Credits](#credits)
 - [Disclaimer](#disclaimer)
 - [License](#license)
 
 ## Quick Start
 
-Install the plugin:
-
 ```
 /plugin marketplace add johnpeterman72/nelson.sigma
 /plugin install nelson@nelson-sigma-marketplace
 ```
 
-Describe your mission — Nelson loads automatically, no slash command needed:
+Describe the mission and mention Nelson:
 
 ```
 Use Nelson to migrate the payment module from Stripe v2 to v3
 ```
 
-Nelson will draft sailing orders, present a battle plan for your approval, form a squadron of captains to execute in parallel, run quarterdeck checkpoints, and produce a captain's log when the mission stands down. See [Prerequisites](#prerequisites) for the full agent-team experience with split panes.
+Nelson writes sailing orders, scouts the codebase, drafts a battle plan, presents it once for approval, forms a squadron of named captains, runs quarterdeck checkpoints, and writes a captain's log when it stands down.
 
 ## What it does
 
-https://github.com/user-attachments/assets/2468679d-39f5-4efb-9d93-43d43eee8907
+An eight-step operational framework, Ω₁ to Ω₈:
 
-Nelson gives Claude an eight-step operational framework for tackling complex missions:
-
-1. **Sailing Orders** — Define the outcome, success metric, constraints, and stop criteria
-2. **The Estimate** — Conduct the 7 Question Maritime Tactical Estimate: reconnaissance, intent, effects, terrain, forces, coordination, and control
-3. **Battle Plan** — Turn approved effects into task assignments with owners, dependencies, and file ownership
-4. **Form the Squadron** — Choose an execution mode (single-session, subagents, agent team, workflow, or hybrid workflow) and size the team
-5. **Get Permission to Sail** — Present the plan for user approval before committing resources
-6. **Quarterdeck Rhythm** — Run checkpoints to track progress, identify blockers, monitor hull integrity, and manage budget
-7. **Action Stations** — Classify tasks by risk tier and enforce verification before marking complete
-8. **Stand Down** — Produce a captain's log with decisions, artifacts, validation evidence, and follow-ups
-
-## Symbolic compression
-
-Nelson♦Σ keeps every rule, gate, threshold, command, and template of upstream Nelson and rewrites the prose around them in a compact notation. `SKILL.md` is loaded on every mission; the files under `references/` are loaded on demand, so both matter.
-
-| Symbol | Stands for |
-|---|---|
-| Ω₁ … Ω₈ | the eight workflow steps |
-| Π | engine phase (`SAILING_ORDERS` → … → `STAND_DOWN`) |
-| Μ₁ … Μ₅ | execution mode (single-session, subagents, agent-team, workflow, hybrid-workflow) |
-| Σ₀ 🟢 … Σ₃ 🔴 | action station (risk tier) |
-| Η🟢 Η🟡 Η🔴 Η⚫ | hull integrity (context remaining) |
-| Ε₁ … Ε₇ | the seven Estimate questions |
-| ADM · CPT · RCN · RM | admiral, captain, red-cell navigator, royal marine |
-| Φ · Δ · Τ | standing order, damage-control procedure, template |
-| ND · NP · NCS | the `nelson-data.py`, `nelson-phase.py`, `nelson_conflict_scan.py` commands |
-| ⛔ 📖 💾 ⏸ | hard gate, must read, must write to disk, wait for the human |
-
-The full vocabulary is in [`skills/nelson/references/sigma-legend.md`](skills/nelson/references/sigma-legend.md).
-
-Measured with a byte-pair tokenizer (cl100k as a proxy for Claude's):
-
-| File set | Upstream v2.4.0 | Nelson♦Σ | Saving |
-|---|---|---|---|
-| `SKILL.md` (every mission) | 9,804 | 7,025 | 28% |
-| `references/` (on demand) | 40,854 | 37,447 | 8% |
-
-The references total includes two files that did not exist upstream (the symbol legend and the extracted star-prompt procedure); excluding those, the converted references are 14% smaller. Damage-control procedures compressed 26–41%; templates and table-heavy references barely moved, because field labels, tool names, and JSON keys must stay literal.
-
-Two honest notes. Greek letters and math operators cost about as many tokens as the words they replace, so the saving comes from cutting explanatory prose, not from the glyphs; the script aliases and role abbreviations are the parts that pay for themselves outright. And a byte count overstates the win: unicode symbols are multi-byte, so judge by tokens, not kilobytes.
-
-Everything a Python script parses stays literal — the step headings, the Standing Orders table, turnover-brief labels, battle-plan ownership lines, JSON keys, and every `references/` path — so upstream's hooks, phase engine, conflict scan, and CI checks run unchanged.
-
-## Why Nelson?
-
-Most agent orchestration tools focus on starting missions. Nelson focuses on completing them safely.
-
-Nelson gives your missions a shared vocabulary: "action stations" instead of "risk tier escalation", "hull integrity" instead of "context window consumption", "man overboard" instead of "stuck agent replacement". The names stick. So do the habits.
-
-- **Risk-gated execution** — Four station tiers (Patrol through Trafalgar) classify every task before it runs. High-risk work requires human confirmation; low-risk work flows without ceremony.
-- **Damage control built in** — Eleven named procedures for stuck agents, context exhaustion, faulty output, budget overruns, automated alarms, and mission abort. These are protocols, not improvisation.
-- **A decision log by default** — Captain's log, quarterdeck reports, and turnover briefs are written as the mission runs. Every decision is auditable after the session ends.
-
-Nelson coordinates its own development — recent releases have been planned and executed as Nelson missions.
-
-### Who is this for?
-
-- You run Claude Code missions spanning multiple files or modules in parallel
-- You want structured checkpoints, risk classification, and a decision log
-- You've lost work to context exhaustion and want systematic handover procedures
-- You care about auditability — knowing what was decided, by which agent, and why
-
-It may be overkill if you're doing a quick, single-file edit.
-
-### How Nelson compares
-
-Nelson trades upfront setup time for coordination guarantees:
-
-| Approach | Best when | Trade-off |
-|---|---|---|
-| Nelson Navy structure | You need repeatable quality gates, explicit ownership, and a clear decision log across parallel work | More setup and coordination overhead up front |
-| OmO/RuFlo-style rapid flow | You need the fastest possible movement on a narrow, low-risk path | Less formal checkpointing and role separation |
-
-If you need fast parallel execution with minimal ceremony, [OmO](https://github.com/code-yeongyu/oh-my-openagent) or [RuFlo](https://github.com/ruvnet/ruflo) may suit you better. If coordination, auditability, and safe scaling matter more than raw tempo, Nelson is the better fit.
+1. **Sailing Orders** ⚓ — outcome, success metric, constraints, stop criteria
+2. **The Estimate** 🔭 — the 7 Question Maritime Tactical Estimate, in plan mode: reconnaissance, intent, effects, terrain, forces, coordination, control
+3. **Battle Plan** 🗺️ — effects become tasks with owners, dependencies, file ownership, acceptance criteria, and a written Standing Order Check
+4. **Form the Squadron** 🚢 — execution mode, captain count, ship names, crew, models
+5. **Get Permission to Sail** 🫡 — one approval gate before anything spawns
+6. **Quarterdeck Rhythm** 📊 — checkpoints for progress, blockers, budget, and anti-patterns, written to disk
+7. **Action Stations** 🎯 — every task classified by risk; evidence before completion
+8. **Stand Down** 📜 — captain's log with decisions, evidence, follow-ups, and lessons for the next mission
 
 ## How it works
 
 ### Execution modes
 
-The skill selects one of five execution modes based on your mission:
-
-| Mode | When to use | How it works |
-|------|------------|--------------|
-| `single-session` | Sequential tasks, low complexity, heavy same-file editing | Claude works through tasks in order within one session |
-| `subagents` | Parallel tasks where workers only report back to the coordinator | Claude spawns [subagents](https://code.claude.com/docs/en/sub-agents) that work independently and return results |
-| `agent-team` | Parallel tasks where workers need to coordinate with each other | Claude creates an [agent team](https://code.claude.com/docs/en/agent-teams) with direct teammate-to-teammate communication |
-| `workflow` | Large fan-out audits, repeatable migrations, codebase-wide analysis, or cross-checked research | Nelson writes a Workflow Charter and verification contract for one approved [dynamic workflow](https://code.claude.com/docs/en/workflows) run |
-| `hybrid-workflow` | Workflow-suitable missions that need probes, Station 2/3 controls, or human approval between stages | Nelson gates a sequence of separate workflow runs, reviewing telemetry and outputs before the next stage |
-
-### Dynamic workflows and ultracode
-
-Claude Code dynamic workflows move orchestration into workflow scripts that can fan out to many agents, keep intermediate results in script state, and aggregate broad review or migration results. Nelson does not replace that mechanism. Nelson wraps it with doctrine: Sounding-the-Channel probes, explicit permission gates, cost guardrails, audit logs, and verification contracts before findings or edits are accepted.
-
-`ultracode` is treated as a Claude Code `xhigh` effort/automation setting, not a Nelson execution mode. If ultracode or the user chooses a workflow, Nelson still supplies the mission charter, risk tiering, human gates, telemetry expectations, and fallback mode.
-
-### Standing goals
-
-For long autonomous, headless, or scheduled runs, Nelson aligns with Claude Code's [`/goal`](https://code.claude.com/docs/en/goal) — a session-scoped Stop hook that keeps the session from stopping until a completion condition is met. Nelson composes the condition from the sailing orders (`nelson-data.py goal-condition`) so it stays tied to the mission's outcome, metric, and stop criteria, and phrases it against what the goal evaluator can actually see: the conversation transcript. The standing goal and Nelson's Mission Complete Gate reinforce each other — the gate is the discipline the admiral applies, the goal is the harness backstop that enforces it. See `references/goal-alignment.md`.
+| Μ | Mode | When | Runs on |
+|---|---|---|---|
+| Μ₁ | `single-session` | sequential, low complexity, same-file editing | the session itself |
+| Μ₂ | `subagents` | parallel, independent tasks reporting only to the admiral | named background `Agent` dispatches |
+| Μ₃ | `agent-team` | parallel tasks that coordinate with each other, or four or more captains | named agents plus `SendMessage`, shared task list when enabled |
+| Μ₄ | `workflow` | large fan-out audits, migrations, or cross-checked research, when you ask for one | the `Workflow` tool, with a probe first |
 
 ### Chain of command
-
-Nelson uses a three-tier hierarchy. The admiral coordinates captains, each captain commands a named ship, and crew members aboard each ship do the specialist work.
 
 ```
                           ┌───────────┐
@@ -175,160 +89,69 @@ Nelson uses a three-tier hierarchy. The admiral coordinates captains, each capta
            XO  PWO  MEO  PWO  NO  COX
 ```
 
-**Squadron level:**
+The admiral coordinates and never implements. Each captain commands a named ship, one task, and crews only the roles the task needs: XO integration, PWO implementation, NO research, MEO testing, WEO config, LOGO docs, COX standards review. NO and COX are read-only. A captain may deploy up to two Royal Marines, short-lived sub-agents, for single sorties. A red-cell navigator joins for medium and high risk work and only ever reviews.
 
-- **Admiral** — Coordinates the mission, delegates tasks, resolves blockers. Coordinates final synthesis but does not perform it directly. There is always exactly one.
-- **Captains** — Each commands a named ship. Breaks their task into sub-tasks, crews specialist roles, coordinates crew, and verifies outputs. Implements directly only when the task is atomic. Typically 2-7 per mission.
-- **Red-cell navigator** — Challenges assumptions, validates outputs, and checks rollback readiness. Added for medium/high risk work.
+### Action stations
 
-**Ship level (crew per captain, 0-4 members):**
+| Σ | Name | When | Controls |
+|---|---|---|---|
+| Σ₀ 🟢 | Patrol | low blast radius, easy rollback | validation evidence, rollback step |
+| Σ₁ 🟡 | Caution | user-visible, coupled, moderate impact | independent review, negative test, rollback note |
+| Σ₂ 🟠 | Action | security, privacy, data integrity | red-cell review, failure-mode checklist, admiral go/no-go; captain spawned in plan mode |
+| Σ₃ 🔴 | Trafalgar | irreversible, regulated, safety-sensitive | minimal scope, human confirmation, two-step verification, contingency plan |
 
-| Role | Abbr | Function | When to crew |
-|------|------|----------|-------------|
-| Executive Officer | XO | Integration & orchestration | 3+ crew or interdependent sub-tasks |
-| Principal Warfare Officer | PWO | Core implementation | Almost always (default doer) |
-| Navigating Officer | NO | Codebase research & exploration | Unfamiliar code, large codebase |
-| Marine Engineering Officer | MEO | Testing & validation | Station 1+ or non-trivial verification |
-| Weapon Engineering Officer | WEO | Config, infrastructure & systems integration | Significant config/infra work |
-| Logistics Officer | LOGO | Documentation & dependency management | Docs as deliverable, dep management |
-| Coxswain | COX | Standards review & quality | Station 1+ with established conventions |
+### Standing orders
 
-Navigating Officer (NO) and Coxswain (COX) are read-only — they report findings but never modify files.
-
-Ships are named from real Royal Navy warships, matched roughly to task weight: frigates for general-purpose, destroyers for high-tempo, patrol vessels for small tasks, historic flagships for critical-path, and submarines for research.
-
-Squadron size caps at 10 squadron-level agents (admiral, captains, red-cell navigator). Crew are additional — up to 4 per ship. If a task needs more crew, split it into two ships.
-
-### Action stations (risk tiers)
-
-Every task is classified into a risk tier before execution. Higher tiers require more controls:
-
-| Station | Name | When | Required controls |
-|---------|------|------|-------------------|
-| 0 | Patrol | Low blast radius, easy rollback | Basic validation, rollback step |
-| 1 | Caution | User-visible changes, moderate impact | Independent review, negative test, rollback note |
-| 2 | Action | Security/compliance/data integrity implications | Red-cell review, failure-mode checklist, go/no-go checkpoint |
-| 3 | Trafalgar | Irreversible actions, regulated/safety-sensitive | Minimal scope, human confirmation, two-step verification, contingency plan |
-
-<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/2d0bf2ea-3f26-4751-9faa-71eca6be07b3" />
-
-Tasks at Station 1 and above also run a **failure-mode checklist**:
-
-- What could fail in production?
-- How would we detect it quickly?
-- What is the fastest safe rollback?
-- What dependency could invalidate this plan?
-- What assumption is least certain?
+Six anti-pattern guards, answered in writing before the plan is final and scanned at every checkpoint: Right-Sized Squadron, Admiral at the Helm, Pressed Crew, Split Keel, Drifting Anchorage, Paid Off. Upstream's seventeen orders express these six rules; the consolidation loses none of them.
 
 ### Damage control
 
-Most agent frameworks assume the happy path. Nelson includes battle-tested procedures for when things go wrong — stuck agents, budget overruns, faulty outputs, and context window exhaustion all have documented recovery paths.
-
-**Hull integrity monitoring** tracks context window consumption across the squadron. The admiral reads exact token counts from Claude Code session JSONL files at each quarterdeck checkpoint and maintains a squadron readiness board:
-
-| Status | Remaining | Action |
-|---|---|---|
-| Green | 75-100% | Operating normally |
-| Amber | 60-74% | Monitor closely, avoid new work |
-| Red | 40-59% | Relief on station — begin handover |
-| Critical | Below 40% | Immediate relief |
-
-Token counts come directly from the API usage data Claude Code records on every assistant turn — no estimation heuristics, no paid APIs, no external dependencies. `scripts/count-tokens.py` extracts them and produces damage reports.
-
-**Relief on station** replaces a ship whose context window is depleted. The damaged ship writes a turnover brief to file; a fresh replacement reads it and continues the mission. Chained reliefs (A → B → C) are supported for long-running tasks. The flagship monitors its own hull integrity too and can hand over to a new session.
-
-**Circuit breakers** layer automated alarms on top of the admiral's checkpoint rhythm — hull integrity, budget burn, cost-per-task, consecutive blockers, and idle timeouts. When a threshold is crossed, an advisory event is appended to the mission log and surfaced to the admiral, who decides the remedy. Circuit breakers do not auto-abort.
-
-**Other procedures** cover the rest of the failure modes:
-
-- **Man overboard** — replace a stuck agent
-- **Partial rollback** — revert faulty work without aborting the mission
-- **Crew overrun** — recover from budget exhaustion
-- **Scuttle and reform** — abort and reform when the mission cannot succeed
-- **Comms failure** — recover from agent-team infrastructure failure
-- **Session resumption** — pick up after an interruption
-- **Session hygiene** — clean-start procedure for new sessions
-- **Escalation** — chain-of-command for issues beyond current authority
-
-### Conflict radar
-
-When multiple ships work in parallel, undeclared file overlaps are a common source of merge pain. Nelson ships two tools that catch conflicts at different stages:
-
-- **Pre-flight conflict scan** (`nelson_conflict_scan.py`) — parses the battle plan before Action Stations, walks the codebase import graph, and flags "split-keel" violations where two captains own files that import each other.
-- **Runtime conflict radar** (`nelson_conflict_radar.py`) — compares live `git status` against the battle plan's file ownership declarations during execution and alerts on changed files that have no registered owner.
-
-Both tools are stdlib-only and run as part of the mission workflow without additional setup.
-
-### Enforcement hooks
-
-Nelson is not purely advisory. A set of Claude Code hooks (`hooks/nelson_hooks.py`) enforce structural guarantees at the tool level:
-
-| Event | Hook | What it enforces |
-|---|---|---|
-| `PreToolUse` on `Agent` | `preflight` | Station tier gate, file ownership conflicts, mode-tool consistency |
-| `PreToolUse` on `TaskCreate` | `session-check` | Captain TaskCreate gate (admiral exception via session marker) |
-| `PostToolUse` on `Write`/`Edit` | `brief-validate` | Turnover brief quality gate |
-| `TaskCompleted` | `task-complete` | Validation evidence and station controls |
-| `TeammateIdle` | `idle-ship` | Paid-off standing order advisory |
-| `SessionStart` | `session-init` | Records admiral `transcript_path` for the TaskCreate gate |
-
-Plugin installs auto-discover `hooks/hooks.json` and wire these up with no user action. Hooks degrade gracefully: if no active Nelson mission is found, they exit cleanly and do not interfere with non-Nelson workflows. See [Installation](#installation) for manual-install caveats.
-
-### Cross-mission intelligence
-
-Nelson accumulates learning across missions in `.nelson/memory/`. Each completed mission feeds a persistent pattern library (`patterns.json`) and standing-order violation stats (`standing-order-stats.json`). Five `nelson-data.py` subcommands expose this:
-
-- **`brief`** — pre-mission intelligence brief: relevant patterns, win rate, standing order hot spots, and context-matched precedents drawn from prior missions.
-- **`analytics`** — focused metric queries (`success-rate`, `standing-orders`, `efficiency`) with text or JSON output.
-- **`history`** / **`index`** — review and rebuild the fleet intelligence index across past missions.
-- **`stand-down --adopt/--avoid`** — capture reusable patterns at mission close so the next run benefits.
-
-Running `index` backfills the memory store for missions completed before the feature existed, so upgrading is non-destructive.
-
-### Admiral synthesis
-
-Once every ship has reported on Stand Down, the admiral produces a fleet-wide synthesis — consolidating captain outputs into a single decision record. Boundary controls prevent premature synthesis (before all ships have reported) and keep the admiral out of direct implementation.
+Four procedures for when things go wrong: Man Overboard (stuck or unreachable agent), Session Resumption (interruption or compaction), Context Exhaustion (admiral or ship running out of room), Recovery and Abort (rollback, escalation, scuttle and re-form).
 
 ### Templates
 
-Nelson ships eleven structured templates to keep outputs consistent across missions:
+Nine output shapes in one file: sailing orders, battle plan, crew briefing, marine deployment brief, quarterdeck report, relief brief, red-cell review, captain's log, memory entry.
 
-| Template | Used for |
+## Why no scripts
+
+Upstream Nelson v2.4 carries about 9,000 lines of Python. Each module now has a native equivalent:
+
+| Upstream | Nelson♦Σ uses |
 |---|---|
-| **Sailing Orders** | Mission definition: outcome, constraints, scope, stop criteria |
-| **Estimate** | Seven-question analytical scaffold (reconnaissance, intent, effects, terrain, forces, coordination, control) between Sailing Orders and Battle Plan |
-| **Battle Plan** | Task breakdown with owners, dependencies, threat tiers, validation requirements |
-| **Ship Manifest** | Captain's crew plan: ship name, crew roles, sub-tasks, budget |
-| **Crew Briefing** | Per-captain deployment brief: mission context, role, ship, acceptance criteria |
-| **Marine Deployment Brief** | Detachment briefing for Royal Marines (recce, assault, sapper) |
-| **Quarterdeck Report** | Checkpoint status: progress, blockers, budget tracking, risk updates |
-| **Damage Report** | JSON format for hull integrity reporting with token counts and status |
-| **Turnover Brief** | Handover for relief on station: progress log, running plot, relief chain |
-| **Red-Cell Review** | Adversarial review: challenge summary, checks, recommendation |
-| **Captain's Log** | Final report: delivered artifacts, decisions, validation evidence, follow-ups |
+| mission JSON files and event log | the task list, `battle-plan.md`, `quarterdeck-report.md` |
+| phase engine and tool gate | the Ω sequence and plan mode |
+| conflict scan and radar, file-ownership checks | `isolation: "worktree"` on the Agent tool |
+| hull-integrity monitoring, damage reports, turnover packets | compaction at safe points; a relief brief and a fresh dispatch |
+| circuit breakers | the checkpoint budget line and idle notifications |
+| goal composer | a `/goal` condition shape in the tool mapping |
+| cross-mission pattern mining | `.nelson/memory.md` and the session memory directory |
+| enforcement hooks | the admiral's gates, the red-cell navigator, and the human at Σ₃ |
 
-<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/5955341c-a251-4e05-b0ed-61f424181201" />
+What is genuinely lost: deterministic enforcement (a hook can reject a task marked complete without evidence; a rule can only insist) and quantitative cross-mission analytics. If you want either, the last script-bearing edition is tag [`v2.4.0-sigma`](https://github.com/johnpeterman72/nelson.sigma/releases/tag/v2.4.0-sigma), and upstream carries the full machinery.
+
+## Symbolic compression
+
+Every rule, gate, threshold, and template survives; the prose around them is cut and recurring phrases become symbols: Ω₁–Ω₈ for the steps, Μ₁–Μ₄ for modes, Σ₀–Σ₃ for risk tiers, Ε₁–Ε₇ for the Estimate questions, ADM CPT RCN RM for roles, Φ and Δ for orders and procedures, ⛔ 📖 💾 ⏸ for gates. The vocabulary is in [`skills/nelson/references/sigma-legend.md`](skills/nelson/references/sigma-legend.md).
+
+Measured with a byte-pair tokenizer (cl100k as a proxy for Claude's):
+
+| File set | Upstream v2.4.0 | Nelson♦Σ | Saving |
+|---|---|---|---|
+| `SKILL.md` (loads every mission) | 9,804 | 3,549 | 64% |
+| `references/` (loaded on demand) | 40,854 | 12,079 | 70% |
+| whole skill | 50,658 | 15,628 | 69% |
+
+An honest note: the glyphs themselves are not where the saving comes from. Greek letters and math operators cost about as many tokens as the words they replace. The saving comes from cutting explanatory prose, consolidating seventeen files into six, dropping the 10,000-token CLI reference the scripts needed, and abbreviating the roles and gates. Judge by tokens, never by kilobytes: symbols are multi-byte.
 
 ## Prerequisites
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed and authenticated
-- **Recommended:** Enable [agent teams](https://code.claude.com/docs/en/agent-teams) for the full squadron experience. Nelson works without it (using single-session or subagent modes), but agent teams unlock teammate-to-teammate coordination — the `agent-team` execution mode. Plugin installs ship a `settings.json` that enables this automatically. For manual installs, add this to your [settings.json](https://code.claude.com/docs/en/settings):
-
-```json
-{
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-  }
-}
-```
-
-- **For split-pane visibility:** To see each agent working in its own pane (as shown in the demo video), run Claude Code inside [tmux](https://github.com/tmux/tmux/wiki). Agent teams auto-detect tmux and give every teammate a dedicated split pane so you can watch the whole squadron in action.
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated. That is all.
+- **Optional:** the [agent teams](https://code.claude.com/docs/en/agent-teams) feature adds a shared task list for the `agent-team` mode. Plugin installs ship a `settings.json` that enables it; for manual installs add `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to your settings. Nelson works without it.
+- **Optional:** run inside [tmux](https://github.com/tmux/tmux/wiki) to watch every ship in its own pane.
 
 ## Installation
 
 ### Plugin install (recommended)
-
-Add the marketplace and install:
 
 ```
 /plugin marketplace add johnpeterman72/nelson.sigma
@@ -338,119 +161,51 @@ Add the marketplace and install:
 <details>
 <summary>Prompt-based install</summary>
 
-Open Claude Code and say:
-
 ```
 Install skills from https://github.com/johnpeterman72/nelson.sigma
 ```
 
-Claude will clone the repo, copy the skill into your project's `.claude/skills/` directory, and clean up. To install it globally across all projects, ask Claude to install it to `~/.claude/skills/` instead.
+Claude clones the repo, copies the skill into your project's `.claude/skills/`, and cleans up. Ask for `~/.claude/skills/` to install globally.
 
 </details>
 
 <details>
 <summary>Manual install</summary>
 
-Clone the repo and copy the skill directory yourself:
-
 ```bash
-# Project-level (recommended for teams)
-git clone https://github.com/johnpeterman72/nelson.sigma.git /tmp/nelson
+git clone https://github.com/johnpeterman72/nelson.sigma.git /tmp/nelson-sigma
 mkdir -p .claude/skills
-cp -r /tmp/nelson/skills/nelson .claude/skills/nelson
-rm -rf /tmp/nelson
-
-# Or user-level (personal, all projects)
-cp -r /tmp/nelson/skills/nelson ~/.claude/skills/nelson
+cp -r /tmp/nelson-sigma/skills/nelson .claude/skills/nelson
+rm -rf /tmp/nelson-sigma
 ```
 
-Then commit `.claude/skills/nelson/` to version control so your team can use it.
-
-> **Heads up:** the manual path installs the skill only. Nelson's [enforcement hooks](#enforcement-hooks) and the bundled `settings.json` (which enables agent teams) are wired up automatically by the plugin system via `${CLAUDE_PLUGIN_ROOT}` and are **not** picked up by a skill-only copy. If you rely on the station-tier gate, file ownership checks, or turnover brief validation, use the plugin install above. To enable agent teams with a manual install, add the env var from [Prerequisites](#prerequisites) to your own `settings.json`.
+Nothing else is needed; there are no scripts to wire up.
 
 </details>
 
 <details>
-<summary>Updating</summary>
+<summary>Verify</summary>
 
-For plugin installs, run `/plugin` and either enable auto-updates on `nelson-sigma-marketplace` or trigger an update from the marketplace menu. From the command line:
-
-```
-/plugin marketplace update nelson-sigma-marketplace
-/plugin install nelson@nelson-sigma-marketplace
-```
-
-If updates aren't taking effect, remove and re-add the marketplace. For manual installs, delete `skills/nelson/` and repeat the manual install.
-
-</details>
-
-<details>
-<summary>Verify installation</summary>
-
-Open Claude Code and ask:
-
-```
-What skills are available?
-```
-
-You should see `nelson` listed. You can also test it by saying "Use Nelson to..." followed by a task.
-
-</details>
-
-<details>
-<summary>Installation for Cursor (Experimental)</summary>
-
-If you have a Team Marketplace in Cursor, you can add Nelson there. See [Add a team marketplace](https://cursor.com/docs/plugins#add-a-team-marketplace) in the Cursor documentation. The required GitHub repository URL is `https://github.com/johnpeterman72/nelson.sigma.git`. Once the marketplace is installed, you can install Nelson from it.
-
-If you do not have access to a Team Marketplace, you can install locally on Linux and macOS:
-
-```bash
-cd ~/.cursor/plugins/local
-git clone -b main --depth 1 https://github.com/johnpeterman72/nelson.sigma.git
-```
-
-To update the plugin after that:
-
-```bash
-cd ~/.cursor/plugins/local/nelson
-git pull
-```
+Ask Claude Code `What skills are available?` and look for `nelson`, or say "Use Nelson to..." followed by a task.
 
 </details>
 
 ## Usage
 
-Nelson is a Claude Code skill — it loads automatically when your request matches. No slash command required. Just describe your mission and mention Nelson.
-
-### Let Nelson pick the execution mode
-
-Nelson selects the best execution mode (single-session, subagents, agent team, workflow, or hybrid workflow) based on your mission:
+Nelson loads when your request matches its description; no slash command is required.
 
 ```
 Use Nelson to migrate the payment processing module from Stripe v2 to v3
 ```
 
-### Force an agent team
-
-If you want teammate-to-teammate coordination, ask for an agent team explicitly:
+Force a mode:
 
 ```
 Use an agent team with Nelson to refactor the authentication system across
 the API layer, frontend, and test suite
 ```
 
-### Go maximal
-
-For the highest-capability run — Opus 4.7 agents, fully crewed ships, maximum coordination:
-
-```
-Use an agent team with Nelson and Opus 4.7 agents with fully crewed ships
-to deliver the new billing integration
-```
-
-### Full sailing orders
-
-For maximum control, provide your own sailing orders:
+Provide full sailing orders:
 
 ```
 Use Nelson to deliver this:
@@ -469,185 +224,48 @@ Scope:
 - Out of scope: Frontend error handling
 ```
 
-You can also invoke it directly with the `/nelson` slash command if you prefer.
+For long unattended runs, Nelson offers a `/goal` composed from the sailing orders so the session cannot stop before the captain's log is written. `/nelson` also works directly.
 
-## Customisation
-
-Edit files under `skills/nelson/references/` to adapt Nelson to your team — `admiralty-templates/` for reporting style, `action-stations.md` for risk-tier controls, `squadron-composition.md` for team sizing rules.
-
-## Plugin file structure
+## File structure
 
 ```
-.claude-plugin/           # Plugin + marketplace manifests
-settings.json             # Default settings (enables agent teams)
-hooks/                    # Enforcement hooks (auto-discovered by plugin)
+.claude-plugin/           # Plugin and marketplace manifests
+settings.json             # Enables agent teams (optional feature)
 skills/nelson/
-├── SKILL.md              # Main skill instructions (entrypoint)
-├── references/           # Supporting docs loaded on demand
-│   ├── sigma-legend.md           # Symbol legend (read this first)
-│   ├── action-stations.md        # Risk tier definitions
-│   ├── admiralty-templates/      # 11 structured templates
-│   ├── crew-roles.md             # Crew role definitions & ship names
-│   ├── damage-control/           # 11 recovery procedures
-│   ├── goal-alignment.md         # Claude Code /goal (standing goal) doctrine
-│   ├── stand-down-star.md        # One-time GitHub star prompt (Stand Down)
-│   ├── standing-orders/          # 17 anti-pattern guards
-│   ├── the-estimate.md           # 7 Question Maritime Tactical Estimate reference
-│   ├── squadron-composition.md   # Mode selection & team sizing
-│   └── workflow-doctrine.md      # Dynamic workflow & ultracode doctrine
-└── scripts/              # nelson-data.py, conflict scan, circuit breakers, tests
+├── SKILL.md              # Ω₁–Ω₈, gates, standing-order and damage-control index
+└── references/
+    ├── sigma-legend.md     # Symbol vocabulary and mission directory layout
+    ├── squadron.md         # Modes, sizing, roles, crew, ships, marines, models
+    ├── action-stations.md  # Risk tiers and controls
+    ├── tool-mapping.md     # Native tool per operation; workflows; standing goal
+    ├── standing-orders.md  # Φ₁–Φ₆
+    ├── damage-control.md   # Δ₁–Δ₄
+    ├── templates.md        # Nine output shapes
+    └── the-estimate.md     # 7 Question Maritime Tactical Estimate
+agents/nelson.md          # Agent definition bound to the skill
+scripts/check-references.sh
+demos/battleships/        # Example application built with Nelson
 ```
-
-<details>
-<summary>Full file tree</summary>
-
-```
-.claude-plugin/
-├── plugin.json                               # Plugin manifest
-└── marketplace.json                          # Marketplace definition (self-hosted)
-settings.json                                 # Plugin default settings (enables agent teams)
-hooks/
-├── hooks.json                                # Skill-scoped hook configuration (auto-discovered)
-├── nelson_hooks.py                           # Hook enforcement script (preflight, brief, task, idle)
-└── test_nelson_hooks.py                      # Tests for hook handlers
-skills/nelson/
-├── SKILL.md                                  # Main skill instructions (entrypoint)
-├── references/
-│   ├── action-stations.md                    # Risk tier definitions and controls
-│   ├── admiralty-templates/                  # Individual template files
-│   │   ├── battle-plan.md
-│   │   ├── captains-log.md
-│   │   ├── crew-briefing.md
-│   │   ├── damage-report.md
-│   │   ├── estimate.md
-│   │   ├── marine-deployment-brief.md
-│   │   ├── quarterdeck-report.md
-│   │   ├── red-cell-review.md
-│   │   ├── sailing-orders.md
-│   │   ├── ship-manifest.md
-│   │   └── turnover-brief.md
-│   ├── commendations.md                       # Recognition signals and correction guidance
-│   ├── crew-roles.md                         # Crew role definitions, ship names, sizing
-│   ├── goal-alignment.md                     # Claude Code /goal (standing goal) doctrine
-│   ├── damage-control/                       # Individual procedure files
-│   │   ├── circuit-breakers.md
-│   │   ├── comms-failure.md
-│   │   ├── crew-overrun.md
-│   │   ├── escalation.md
-│   │   ├── hull-integrity.md
-│   │   ├── man-overboard.md
-│   │   ├── partial-rollback.md
-│   │   ├── relief-on-station.md
-│   │   ├── scuttle-and-reform.md
-│   │   ├── session-hygiene.md
-│   │   └── session-resumption.md
-│   ├── model-selection.md                    # Cost-optimized model assignment for agents
-│   ├── royal-marines.md                      # Royal Marines deployment rules
-│   ├── sigma-legend.md                       # Symbol legend for the whole skill
-│   ├── squadron-composition.md               # Mode selection and team sizing rules
-│   ├── stand-down-star.md                    # One-time GitHub star prompt procedure
-│   ├── structured-data.md                    # Structured fleet data capture reference
-│   ├── the-estimate.md                       # 7 Question Maritime Tactical Estimate reference
-│   ├── tool-mapping.md                       # Nelson-to-Claude Code tool reference
-│   ├── workflow-doctrine.md                  # Dynamic workflow and ultracode doctrine
-│   └── standing-orders/                      # Individual anti-pattern files (17)
-│       ├── admiral-at-the-helm.md
-│       ├── all-hands-on-deck.md
-│       ├── awaiting-admiralty.md
-│       ├── battalion-ashore.md
-│       ├── becalmed-fleet.md
-│       ├── captain-at-the-capstan.md
-│       ├── crew-without-canvas.md
-│       ├── drifting-anchorage.md
-│       ├── light-squadron.md
-│       ├── paid-off.md
-│       ├── press-ganged-navigator.md
-│       ├── pressed-crew.md
-│       ├── skeleton-crew.md
-│       ├── split-keel.md
-│       ├── unclassified-engagement.md
-│       └── wrong-ensign.md
-└── scripts/                                  # Distributed with the skill (since v1.9.1)
-    ├── nelson-data.py                        # CLI entry point for structured data capture
-    ├── nelson_data_utils.py                  # Shared I/O, validation, constants
-    ├── nelson_data_memory.py                 # Cross-mission memory store (v2.0.0)
-    ├── nelson_data_lifecycle.py              # Mission lifecycle commands
-    ├── nelson_data_goal.py                   # Composes a Claude Code /goal condition
-    ├── nelson_data_fleet.py                  # Fleet intelligence & analytics
-    ├── nelson_conflict_scan.py               # Pre-flight split-keel scanner
-    ├── nelson_conflict_radar.py              # Runtime file-conflict monitor
-    ├── nelson_circuit_breakers.py            # Automated budget/hull/idle alarms
-    ├── nelson-phase.py                       # Deterministic phase engine
-    └── test_*.py                             # Test suite (pytest)
-agents/
-└── nelson.md                                 # Agent definition with skill binding
-scripts/
-├── check-references.sh                       # Cross-reference validation for documentation links
-└── count-tokens.py                           # Token counter for hull integrity monitoring
-```
-
-</details>
-
-`SKILL.md` is the entrypoint Claude reads when the skill is invoked; files in `references/` are loaded on demand rather than all at once. Hooks and scripts under `skills/nelson/scripts/` are wired up automatically by the plugin system via `${CLAUDE_PLUGIN_ROOT}` and ship with the skill on install.
 
 ## Mission artifacts
 
-Each mission creates a timestamped directory for its runtime artifacts. Previous missions are preserved — each run gets its own directory. The `SESSION_ID` suffix is an 8-character hex string generated at session start via `uuidgen`, ensuring **concurrent Nelson sessions** in the same repository create distinct directories.
-
-Nelson writes two kinds of artifacts side by side: **prose** for humans (captain's log, quarterdeck report, turnover briefs) and **structured JSON** for machines (session resumption, hooks, analytics). The JSON files are produced by `nelson-data.py` subcommands called at each workflow step.
-
-<details>
-<summary>Artifact directory structure</summary>
+Each mission writes three or four markdown files under a timestamped directory, and the skill appends lessons to a memory file the next mission reads first.
 
 ```
 .nelson/
-├── missions/{YYYY-MM-DD_HHMMSS}_{SESSION_ID}/
-│   ├── captains-log.md         — Written at stand-down
-│   ├── quarterdeck-report.md   — Updated at every checkpoint
-│   ├── damage-reports/         — Ship damage reports (JSON)
-│   ├── turnover-briefs/        — Ship turnover briefs (markdown)
-│   ├── sailing-orders.json     — Mission definition (init)
-│   ├── battle-plan.json        — Tasks, owners, file ownership (plan-approved)
-│   ├── mission-log.json        — Event stream (events, handoffs, checkpoints)
-│   ├── fleet-status.json       — Current squadron state (live)
-│   └── stand-down.json         — Final outcome, decisions, adopted/avoided patterns
-└── memory/                     — Cross-mission memory store (v2.0.0)
-    ├── patterns.json           — Accumulated adopt/avoid pattern library
-    └── standing-order-stats.json — Violation frequency & correlations
+├── memory.md                       # adopt / avoid / recurring standing orders
+└── missions/{YYYY-MM-DD_HHMM}-{slug}/
+    ├── battle-plan.md              # sailing orders, Standing Order Check, task briefs, formation
+    ├── estimate.md                 # when The Estimate was conducted
+    ├── quarterdeck-report.md       # latest checkpoint; history rotates to -N.md
+    └── captains-log.md             # written at stand-down; marks the mission complete
 ```
 
-</details>
-
-## Compatibility notes
-
-### Platform support
-
-Nelson is built around **Claude Code orchestration primitives** — shared task lists, peer messaging between agents, subagents, and dynamic workflows. These are the foundation of Nelson's squadron model: captains coordinating in parallel, the admiral running quarterdeck checkpoints, and damage control procedures that keep modern Claude Code orchestration auditable.
-
-| Platform | Status | Notes |
-|----------|--------|-------|
-| **Claude Code** | Supported | Full support for all five execution modes (single-session, subagents, agent-team, workflow, hybrid-workflow) |
-| **Cursor** | Experimental | See installation instructions above |
-| **Codex CLI** | Not yet supported | Lacks agent-team primitives. [Agents SDK](https://openai.github.io/openai-agents-python/) orchestration may provide a path — monitoring |
-| **OpenCode** | Not yet supported | Agent-team feature exists on dev branch but has not reached stable release |
-| **Gemini CLI** | Not yet supported | No multi-agent coordination primitives. Subagent support is single-level only |
-
-**Why not degrade gracefully?** Nelson's value is the coordination layer — quarterdeck rhythm, peer messaging, shared task lists, damage control, crew hierarchy. On a platform without agent teams, Nelson would degrade to "subagents with Royal Navy naming", which doesn't justify the complexity. When these platforms add agent-team support, Nelson will follow.
-
-We are actively tracking multi-agent developments across these platforms. If you're interested in helping bring Nelson to a new platform, [open an issue](https://github.com/johnpeterman72/nelson.sigma/issues).
-
-### Claude Code specifics
-
-- **Subagents** are a stable Claude Code feature and work out of the box.
-- **Agent teams** are experimental and disabled by default. See [Prerequisites](#prerequisites) above for setup. Without agent teams enabled, Nelson falls back to `single-session` or `subagents` mode. Full details: [Agent teams documentation](https://code.claude.com/docs/en/agent-teams).
+`.nelson/` is git-ignored by default. Un-ignore `memory.md` to share learned patterns with a team.
 
 ## Credits
 
-Nelson♦Σ is a token-optimised fork of [Nelson](https://github.com/harrymunro/nelson) by [Harry Munro](https://github.com/harrymunro); the doctrine, scripts, hooks, and templates are his. The symbolic notation follows [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma). The Stand Down star prompt still stars the upstream repo, because that is where the framework comes from.
-
-### How the star prompt works
-
-On a successful Stand Down, Nelson asks once whether you'd like to star the repo on GitHub. The answer is recorded in `~/.nelson/prefs.json` (`{"star_asked": true}`) and the prompt never repeats — across all your Nelson projects. To skip permanently without seeing the prompt: `mkdir -p ~/.nelson && echo '{"star_asked": true}' > ~/.nelson/prefs.json`.
+Nelson♦Σ is a fork of [Nelson](https://github.com/harrymunro/nelson) by [Harry Munro](https://github.com/harrymunro); the doctrine, templates, and names are his. The symbolic notation follows [CursorRIPER♦Σ](https://github.com/johnpeterman72/CursorRIPER.sigma).
 
 ## Disclaimer
 

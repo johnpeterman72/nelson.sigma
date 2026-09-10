@@ -10,60 +10,22 @@ Thanks for your interest in contributing to Nelson♦Σ.
 
 ## What to contribute
 
-Bug fixes, tighter compression of the skill text, template improvements, documentation fixes, and new ideas are all welcome. Doctrine changes (new standing orders, new procedures, workflow changes) are best proposed upstream at [harrymunro/nelson](https://github.com/harrymunro/nelson) first, then compressed here; that keeps the two editions in step. If you're thinking about a larger change, open an issue first so we can discuss it.
+Tighter compression of the skill text, clearer templates, documentation fixes, and mappings to new Claude Code capabilities are all welcome. Doctrine changes (new standing orders, new procedures, workflow changes) are best proposed upstream at [harrymunro/nelson](https://github.com/harrymunro/nelson) first, then folded in here. Anything that needs a script, a hook, or a runtime dependency is out of scope by design; see [CLAUDE.md](./CLAUDE.md).
 
 ## Skill structure
 
-The skill lives in `skills/nelson/`. The key files:
+The skill lives in `skills/nelson/`:
 
-- `SKILL.md` — Main skill instructions (the entrypoint Claude reads), in Nelson♦Σ notation
-- `references/sigma-legend.md` — The symbol vocabulary; read this before editing anything else
-- `references/` — Supporting docs loaded on demand (risk tiers, templates, team sizing)
-- `scripts/` — Python scripts run by the skill at mission time (unchanged from upstream)
-- `agents/` — Agent interface definitions
+- `SKILL.md` — the entrypoint Claude reads, in Nelson♦Σ notation
+- `references/sigma-legend.md` — the symbol vocabulary; read this before editing anything else
+- `references/` — seven supporting files loaded on demand: squadron, action stations, tool mapping, standing orders, damage control, templates, the Estimate
 
-## Notation
-
-See [CLAUDE.md](./CLAUDE.md) → *Notation rules* and *Coupled literals*. In short: symbols replace recurring phrases, never rules; anything a Python script parses stays literal; code fences hold the full command, never an alias.
-
-## Local development
-
-The repo ships AI-targeted sensors (linter, formatter, pre-commit hooks,
-secret scanner) so the same checks run locally and in CI. Set them up
-once after cloning:
+## Local checks
 
 ```bash
-# Install pre-commit hooks (runs on every `git commit`)
-pre-commit install
+npx markdownlint-cli2 "**/*.md"      # markdown lint with the repo config
+bash scripts/check-references.sh     # every cited references/ path exists and is cited
 ```
-
-Day-to-day commands:
-
-```bash
-ruff check                              # Lint with AI-targeted thresholds
-ruff format                             # Apply formatting
-pre-commit run --all-files              # Run every hook on every file
-pytest skills/nelson/scripts/ -v        # Tests — one directory at a
-pytest hooks/ -v                        #   time (each dir has its
-pytest scripts/ -v                      #   own conftest.py)
-npx markdownlint-cli2 "**/*.md"         # Markdown lint with the repo config
-bash scripts/check-references.sh        # Every cited references/ path must exist
-```
-
-See [CLAUDE.md](./CLAUDE.md) → *Maintainability sensors* for the
-suppress-with-reason and bump-threshold conventions. If a sensor
-disagrees with you, propose the threshold change rather than reaching
-for `--no-verify`.
-
-## Syncing with upstream
-
-```bash
-git remote add upstream https://github.com/harrymunro/nelson.git   # once
-git fetch upstream
-git merge upstream/main
-```
-
-After merging, re-compress the prose that arrived in any touched skill file rather than leaving the two styles side by side, then run the sensors above.
 
 ## Guidelines
 

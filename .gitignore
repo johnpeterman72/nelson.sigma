@@ -1,18 +1,6 @@
 .idea/
-.venv/
-__pycache__/
-*.pyc
 .DS_Store
 CLAUDE.local.md
 AGENTS.local.md
 .claude/skills/nelson
 .nelson/
-.beans.yml
-.beans/
-.beads/
-
-# Beads / Dolt files (added by bd init)
-.dolt/
-*.db
-.beads-credential-key
-docs/superpowers/

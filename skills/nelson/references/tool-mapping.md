@@ -1,76 +1,78 @@
-# Tool Mapping Reference
+# Tool Mapping
 
-Nelson operations → Claude Code tool calls, by Μ.
+Nelson operations → native Claude Code tools. Nothing here needs a script, a hook, or an environment variable except where stated.
 
-## Tool Reference
+## Reference
 
-| Nelson Operation | Claude Code Tool | Μ |
+| Operation | Tool | Μ |
 |---|---|---|
-| Form the squadron | `TeamCreate` | Μ₃ |
-| Spawn CPT | `Agent` with `team_name` + `name` | Μ₃ |
-| Spawn CPT | `Agent` with `subagent_type` | Μ₂ |
-| Charter dynamic workflow | battle-plan Workflow Charter prompt | Μ₄ / Μ₅ |
-| Launch workflow stage | Claude Code workflow run from approved charter | Μ₄ / Μ₅ |
-| Record workflow telemetry | `ND event --type workflow_* ...` | Μ₄ / Μ₅ |
-| Compose a standing-goal condition | `ND goal-condition --mission-dir ...` | ∀ Μ |
-| Set the standing goal | `/goal <condition>` (Stop hook) | ∀ Μ |
-| Check / clear the standing goal | `/goal` / `/goal clear` | ∀ Μ |
-| Create task (coordination) | `TaskCreate` | Μ₃ |
-| Assign task to CPT | `TaskUpdate` with `owner` | Μ₃ |
-| Check task progress (coordination) | `TaskList` / `TaskGet` | Μ₃ |
-| Track task visibility (ADM) | `TaskCreate` / `TaskUpdate` / `TaskList` | ∀ Μ ¹ |
-| Message a CPT | `SendMessage(type="message")` | Μ₃ |
-| Broadcast to squadron | `SendMessage(type="broadcast")` | Μ₃ |
-| Shut down a ship | `SendMessage(type="shutdown_request")` | Μ₃ / Μ₂ |
-| Respond to shutdown | `SendMessage(type="shutdown_response")` | Μ₃ |
-| Deploy RM | `Agent` with `subagent_type` | ∀ Μ |
-| Approve CPT's plan | `SendMessage(type="plan_approval_response")` | Μ₃ |
-| Stand down squadron | `TeamDelete` | Μ₃ |
+| Scout terrain (Ε₁) | `Agent` with `subagent_type: "Explore"` | ∀ |
+| Plan read-only (Ω₂–Ω₅) | `EnterPlanMode` → work → `ExitPlanMode` (the approval) | ∀ |
+| Ask a gated question | `AskUserQuestion` | ∀ |
+| Spawn a CPT | `Agent` with `name`, `subagent_type`, `model` (~), `mode: "acceptEdits"`, `isolation: "worktree"` (~) | Μ₂ Μ₃ |
+| Spawn a Σ₂+ CPT | same with `mode: "plan"`; approve via `SendMessage` `plan_approval_response` | Μ₂ Μ₃ |
+| Deploy an RM (by a CPT) | `Agent` with `subagent_type` | ∀ |
+| Message a ship | `SendMessage` to its `name` | Μ₃; Μ₂ only to re-brief |
+| See who is on station | `ListAgents` | Μ₂ Μ₃ |
+| Shut down a ship | `SendMessage` `{"type": "shutdown_request"}`; the ship replies `shutdown_response` | Μ₂ Μ₃ |
+| Track tasks | shared task list (`TaskCreate`, `TaskUpdate`, `TaskList`) when `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`; otherwise `quarterdeck-report.md` | ∀ |
+| Launch a workflow | `Workflow` after loading the `workflow-authoring` skill | Μ₄ |
+| Standing goal | `/goal <condition>` · bare `/goal` shows it · `/goal clear` abandons | ∀ |
+| Compaction | `/compact` at phase boundaries only | ∀ |
+| Resume a session | `--resume` ∨ `--continue`, then Δ₂ | ∀ |
+| Wait on long work | completion and idle notifications arrive on their own; `Monitor` for external state; ✗ polling | ∀ |
+| Cross-mission memory | `.nelson/memory.md`; also the session memory directory when the harness provides one | ∀ |
+
+## Agent Parameters
+
+- `name` — the ship in lowercase (`hms-daring`); the address for `SendMessage`. Recent builds run every named agent in one implicit team; `team_name` is ignored.
+- `subagent_type` — `general-purpose` for implementers; `Explore` for read-only research (NO, COX, Recce RM); a project agent by its name.
+- `model` — omit to inherit ADM's model; `"haiku"` for weight ≤4 under cost-savings (`references/squadron.md`).
+- `mode` — `"acceptEdits"` ∀ agent that edits files; omitting it can stall the agent silently at its first edit. `"plan"` for Σ₂+ CPTs: read-only until ADM approves the plan.
+- `isolation: "worktree"` — when file ownership overlaps; ADM merges afterwards.
+- Agents run in the background and notify on completion and idle. Their prompt is their entire context → the crew briefing must be self-contained (`references/templates.md`).
 
 ## Mode Differences
 
-- **Μ₂ `subagents`:** no shared task list. ADM tracks state directly; CPTs report only to ADM. Spawn CPTs with `Agent`.
-    - available: `Agent` with `subagent_type`, `SendMessage(type="shutdown_request")`
-    - ✗ for CPTs: `TaskCreate`, `TaskList`, `TaskGet`, `TaskUpdate`, `SendMessage(type="message")`, `SendMessage(type="broadcast")`, `TeamCreate`, `TeamDelete`
-    - ADM exception: `TaskCreate`/`TaskUpdate`/`TaskList` for session-level visibility (the user's Ctrl+T task list). Invisible to CPTs; for the user's benefit only ¹
-- **Μ₃ `agent-team`:** the task list (`TaskCreate`, `TaskList`, `TaskGet`, `TaskUpdate`) is the shared coordination surface; CPTs message each other via `SendMessage`. `TeamCreate` first → `Agent` with `team_name` and `name`.
-    - available: `TeamCreate`, `TeamDelete`, `Agent` with `team_name` + `name`, all `Task*` tools, all `SendMessage` types
-    - ✗ `Agent` with `subagent_type` for CPTs (RM still use `subagent_type`)
-- **Μ₁ `single-session`:** no spawning; ADM executes all work directly.
-    - available: `TaskCreate`, `TaskUpdate`, `TaskList`, `TaskGet` (visibility tracking) ¹
-    - ✗ `Agent`, `TeamCreate`, `TeamDelete`, `SendMessage`
-- **Μ₄ `workflow`:** one approved autonomous dynamic workflow run. Nelson v1 does not call a workflow API or write runnable workflow scripts; it produces the Workflow Charter and verification contract Claude Code uses to create or run the workflow. Track as a fleet asset; log `workflow_charter_created`, `workflow_run_started`, and `workflow_run_completed` / `workflow_run_stopped` as appropriate.
-    - available: Workflow Charter, Claude Code workflow run, loose telemetry via `ND event`
-    - ✗ mid-run Nelson approval gates → stop the run and use `hybrid-workflow` when approval is needed before continuing
-- **Μ₅ `hybrid-workflow`:** a sequence of separately approved workflow stages, for Σ₂/Σ₃ work, Sounding-the-Channel probes, or any mission needing human sign-off between stages. ∀ stage = its own workflow run with Nelson review before the next launches.
-    - available: same workflow primitives as `workflow` + Nelson permission gates between stages
-    - ✗ arbitrary mid-run human input inside a workflow stage
+- **Μ₁ `single-session`:** no spawning; ADM does the work in order and keeps the task list or quarterdeck report current.
+- **Μ₂ `subagents`:** CPTs cannot see each other or the task list; they return results through the `Agent` completion. ADM re-briefs by `SendMessage` only when needed. ✗ CPT-to-CPT messaging, ✗ expecting CPTs to update shared tasks.
+- **Μ₃ `agent-team`:** CPTs message each other by `SendMessage` and share the task list when the env var is set; results still confirmed by ADM before shutdown. ✗ spawning CPTs without a `name`.
+- **Μ₄ `workflow`:** one scripted run is a fleet asset, ¬ a set of CPTs. ✗ launching without the user's opt-in; ✗ expecting a human gate inside a run.
 
-¹ Visibility tracking uses the same task tools as Μ₃ coordination but serves a different purpose: mission progress in the user's Ctrl+T task list. Μ₂|Μ₁: only ADM calls these tools; CPTs never see or interact with the entries.
+## Workflows (Μ₄)
 
-## Dynamic Workflow Notes
+- **Opt-in rule:** run `Workflow` only when the user asked for one in their own words ("use a workflow", "ultracode", "fan out agents") or a session flag says so. Otherwise describe what a workflow would do and roughly cost, and ask.
+- **Suitability:** codebase-wide audits, one transformation repeated across many independent targets, cross-checked research, repeatable verification sweeps, broad triage. Prefer Μ₃ for tightly coupled work, frequent human steering, or vague acceptance criteria.
+- **Charter** (in the formation orders): execution primitive · suitability · phases · human gates · verification contract · cost guardrail · fallback mode (usually Μ₃).
+- **Sounding the Channel:** probe one representative slice first (one package, a handful of files, one pattern). Report slice, agents done/total, elapsed, token burn, accepted/rejected/uncertain findings, charter changes needed. ⛔ full run only after ADM reviews the probe.
+- **Verification contract:** completion ≠ acceptance. Findings above a risk threshold need an independent verify stage; edits need tests, lint, or review; rejected and uncertain findings are surfaced separately, never folded into the summary.
+- **Σ₂+ work:** Σ₂ needs red-cell review and Σ₃ human confirmation, which a run cannot pause for → split into separate runs with approval between them.
+- **Cost controls:** probe first · cap targets per phase and agents per wave · stop after repeated agent failures · narrow or fall back on low signal, duplicate findings, or excessive cost.
+- **Telemetry** in each quarterdeck report: workflow name, phase, agents done/total, failed agents, elapsed, token burn, findings accepted/rejected/uncertain, next gate.
+- Reusable scripts live at `.claude/workflows/<name>.js` (project) or `~/.claude/workflows/<name>.js` (personal) and re-run as `/<name>`. Workflow-spawned agents run in `acceptEdits` and inherit the session tool allowlist; state expected tool needs in the charter.
 
-Workflow-spawned agents run in `acceptEdits` mode and inherit the session tool allowlist; shell, web, or MCP calls outside it may still prompt. → the charter MUST state expected tool needs up front, and ADM ✗ assume a workflow bypasses permission gates.
+## Standing Goal
 
-Reusable workflow: `.claude/workflows/<name>.js` (project) ∨ `~/.claude/workflows/<name>.js` (personal), re-run as the `/<name>` command; watch and pause/resume runs from the `/workflows` view. Nelson's charter is what you hand to that mechanism. Charter-to-script bridge, Sounding-the-Channel probes, verification contracts, cost guardrails, telemetry, damage-control mapping: `workflow-doctrine.md`.
+`/goal <condition>` installs a session-scoped stop hook: after each turn an evaluator judges the condition against the **conversation transcript only** (no files, no commands) and either lets the session stop or sends it back to work. It auto-clears once met.
 
-## Standing Goal Notes
-
-`/goal <condition>` = ADM-level Stop hook, ¬ a per-agent tool: set once per session, never inside a CPT or workflow run. Its evaluator judges the condition against the **conversation transcript only**; it reads no files and runs no commands. Nelson's completion evidence lives on disk → compose the condition with `ND goal-condition` (words it against transcript-visible facts), ¬ by hand, and surface that evidence into chat at Ω₈. Full doctrine (availability, resumption, subagent scope, anti-patterns): `references/goal-alignment.md`.
+- **Transcript rule:** ⛔ phrase the goal against facts ADM will state in chat, never against files on disk alone; otherwise the session loops forever on a finished mission.
+- **Condition shape:** `/goal Mission <slug> complete: success metric "<metric>" confirmed met in chat, every stop criterion satisfied, and captains-log.md written under .nelson/missions with its path stated. Legitimate stop: mission formally abandoned with the reason stated. Or stop after <N> turns.`
+- **When:** long autonomous, headless `-p`, scheduled, or ultracode sessions. ¬ for short interactive missions.
+- **User's own goal:** ✗ replace silently; read it back, reconcile the sailing orders to it, re-issue only with agreement.
+- **Ω₈:** state metric result, log path, stand-down in chat → auto-clears. ✗ tell the user to `/goal clear` on success. Abandoned → Δ₄ and state the reason.
+- **Resumption:** restored on `--resume`/`--continue`, ¬ in a fresh session; re-issue from `battle-plan.md` if the mission is still underway.
+- **Subagents** are not governed by the goal; they answer to Σ and the verification contract.
 
 ## Anti-Patterns
 
-Full Φ: `references/standing-orders/wrong-ensign.md`.
-
-| Anti-Pattern | Why It Fails | Correct Alternative |
+| ! | Why it fails | Instead |
 |---|---|---|
-| `TaskGet` in Μ₂ | no shared task list exists | read the `Agent` return value directly |
-| `SendMessage(type="message")` in Μ₂ | no team exists to route messages | put instructions in the `Agent` prompt |
-| `Agent` with `subagent_type` to spawn a CPT in Μ₃ | agent not registered as a teammate | `Agent` with `team_name` + `name` |
-| `TeamCreate` in Μ₂ | unnecessary team structure | omit; spawn CPTs directly with `Agent` |
-| `TaskCreate` by CPTs in Μ₂ | no shared task list exists for CPTs | ADM tracks visibility via `TaskCreate`/`TaskUpdate` in its own session; CPTs report via the `Agent` return value |
-| treating a workflow stage as an Μ₃ squadron | workflows are scripted runs, ¬ peer-messaging teams | track as a fleet asset with a Workflow Charter and telemetry |
-| expecting human input inside a workflow run | dynamic workflows provide no arbitrary mid-run Nelson gates | `hybrid-workflow`; require approval between separate workflow runs |
-| assuming Nelson v1 invokes workflow APIs directly | v1 ships doctrine and charters, ¬ a workflow compiler | give Claude Code the approved charter/prompt to create or run the workflow |
-| hand-writing a `/goal` against on-disk artifacts | the evaluator sees only the transcript, never observes them; the Stop hook loops forever | compose with `ND goal-condition`; state completion evidence in chat |
-| setting a `/goal` inside a CPT or workflow run | the goal is a session-scoped ADM backstop, ¬ a per-agent control | set once at Ω₁; govern subagents with the verification contract |
+| CPT-to-CPT `SendMessage` in Μ₂ | no coordination surface was planned | choose Μ₃, or route through ADM |
+| spawning a CPT without `name` | unaddressable; cannot be messaged or shut down | always name the ship |
+| omitting `mode: "acceptEdits"` on an editing agent | permission race stalls the agent silently | set it whenever the task edits files |
+| expecting CPTs to see ADM's task entries in Μ₂ | entries are ADM-side visibility only | put instructions in the brief |
+| a human gate inside a workflow run | runs cannot pause for Nelson | separate approved runs |
+| launching `Workflow` without opt-in | policy: the user must ask | describe, cost, ask |
+| `/goal` phrased against on-disk artifacts | evaluator never sees them | state the evidence in chat |
+| setting `/goal` inside a CPT or run | session-level backstop only | set once at Ω₁ |
+| polling `ListAgents` or re-sending "are you done?" | notifications arrive on their own | wait; act on the idle rule |

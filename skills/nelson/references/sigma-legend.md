@@ -1,46 +1,41 @@
 # Nelson♦Σ Symbol Legend
 
-Shared vocabulary for `SKILL.md` and every file under `references/`. Symbols replace recurring phrases; rules, thresholds, paths, and commands stay literal.
+Shared vocabulary for `SKILL.md` and every file under `references/`. Symbols replace recurring phrases; rules, thresholds, tool names, paths, and template labels stay literal.
 
 ## Domains
 
 | Symbol | Domain | Index |
 |---|---|---|
 | Ω | workflow step | Ω₁–Ω₈ |
-| Π | engine phase (`nelson-phase.py`) | SAILING_ORDERS → ESTIMATE → BATTLE_PLAN → FORMATION → PERMISSION → UNDERWAY → STAND_DOWN |
-| Μ | execution mode | Μ₁–Μ₅ |
+| Μ | execution mode | Μ₁–Μ₄ |
 | Σ | action station (risk tier) | Σ₀–Σ₃ |
-| Η | hull integrity (context remaining) | Η🟢 Η🟡 Η🔴 Η⚫ |
 | Ε | Estimate question | Ε₁–Ε₇ |
 | Ρ | role | ADM CPT RCN RM + crew |
-| Φ | standing order (anti-pattern) | Φ₁–Φ₁₇ |
-| Δ | damage-control procedure | Δ₁–Δ₁₁ |
-| Τ | admiralty template | one file per template |
+| Φ | standing order (anti-pattern) | Φ₁–Φ₆ |
+| Δ | damage-control procedure | Δ₁–Δ₄ |
+| Τ | template | sections of `references/templates.md` |
 
-## Ω Steps and Π Phases
+## Ω Steps
 
-| Ω | Step | Π phase while active |
+| Ω | Step | Native surface |
 |---|---|---|
-| Ω₁ ⚓ | Issue Sailing Orders | SAILING_ORDERS |
-| Ω₂ 🔭 | Conduct The Estimate | ESTIMATE |
-| Ω₃ 🗺️ | Draft Battle Plan | BATTLE_PLAN |
-| Ω₄ 🚢 | Form the Squadron | FORMATION |
-| Ω₅ 🫡 | Get Permission to Sail | PERMISSION |
-| Ω₆ 📊 | Run Quarterdeck Rhythm | UNDERWAY |
-| Ω₇ 🎯 | Set Action Stations | UNDERWAY |
-| Ω₈ 📜 | Stand Down And Log Action | STAND_DOWN |
-
-`NP advance` moves Π forward one phase; each transition has an exit validator (see `references/structured-data.md`).
+| Ω₁ ⚓ | Issue Sailing Orders | conversation; `/goal` when the mission runs unwatched |
+| Ω₂ 🔭 | Conduct The Estimate | plan mode; `Explore` agents |
+| Ω₃ 🗺️ | Draft Battle Plan | plan mode |
+| Ω₄ 🚢 | Form the Squadron | plan mode (design only, nothing spawns) |
+| Ω₅ 🫡 | Get Permission to Sail | `ExitPlanMode`, or `AskUserQuestion` outside plan mode |
+| Ω₆ 📊 | Run Quarterdeck Rhythm | `Agent`, `SendMessage`, `ListAgents`, task list, `quarterdeck-report.md` |
+| Ω₇ 🎯 | Set Action Stations | evidence gate; plan mode for Σ₂+ captains |
+| Ω₈ 📜 | Stand Down And Log Action | `captains-log.md`, `.nelson/memory.md` |
 
 ## Μ Execution Modes
 
-| Μ | Mode | Coordination surface |
+| Μ | Mode | Surface |
 |---|---|---|
-| Μ₁ | `single-session` | ADM works tasks in order; `TaskCreate/Update/List/Get` |
-| Μ₂ | `subagents` | `Agent(subagent_type)`; CPTs report via return value only |
-| Μ₃ | `agent-team` | `TeamCreate` → `Agent(team_name, name)`; `TaskList` + `SendMessage` |
-| Μ₄ | `workflow` | one approved dynamic-workflow run, treated as a fleet asset |
-| Μ₅ | `hybrid-workflow` | workflow stages with a human gate between each run |
+| Μ₁ | `single-session` | ADM works tasks in order; no agents |
+| Μ₂ | `subagents` | named `Agent` dispatches; CPTs return results; no peer messaging |
+| Μ₃ | `agent-team` | named `Agent` dispatches + `SendMessage` between CPTs + shared task list where enabled |
+| Μ₄ | `workflow` | one `Workflow` script run; user opt-in required; Σ₂+ work as separate approved runs |
 
 ## Σ Action Stations
 
@@ -48,30 +43,19 @@ Shared vocabulary for `SKILL.md` and every file under `references/`. Symbols rep
 |---|---|---|
 | Σ₃ 🔴 | Trafalgar | irreversible, regulated, severe-incident |
 | Σ₂ 🟠 | Action | security, privacy, data integrity, high blast radius |
-| Σ₁ 🟡 | Caution | user-visible, reliability/cost, coupled to other work |
+| Σ₁ 🟡 | Caution | user-visible, reliability or cost, coupled to other work |
 | Σ₀ 🟢 | Patrol | none of the above |
 
-Controls are cumulative: Σ₁ ⊇ Σ₀, Σ₂ ⊇ Σ₁, Σ₃ ⊇ Σ₂. Full definitions: `references/action-stations.md`.
-
-## Η Hull Integrity
-
-| Η | Status | Context remaining | Action |
-|---|---|---|---|
-| Η🟢 | Green | ≥ 75 % | continue |
-| Η🟡 | Amber | 60–74 % | prepare turnover brief |
-| Η🔴 | Red | 40–59 % | request relief |
-| Η⚫ | Critical | < 40 % | emergency turnover, relief now |
-
-Thresholds and procedure: `references/damage-control/hull-integrity.md`.
+Controls are cumulative: Σ₁ ⊇ Σ₀, Σ₂ ⊇ Σ₁, Σ₃ ⊇ Σ₂. Definitions: `references/action-stations.md`.
 
 ## Ρ Roles
 
 | Abbr | Role | Notes |
 |---|---|---|
 | ADM | admiral | the session running this skill; coordinates, never implements |
-| CPT | captain | commands one ship (one task); coordinates crew or implements when 0 crew |
+| CPT | captain | commands one ship, one task; coordinates crew or implements when 0 crew |
 | RCN | red-cell navigator | adversarial review only; never implementation |
-| RM | royal marine | short-lived sub-agent deployed by a CPT; max 2 per ship |
+| RM | royal marine | short-lived sub-agent a CPT deploys for one sortie; max 2 per ship |
 | XO | Executive Officer | integration across sub-tasks |
 | PWO | Principal Warfare Officer | core implementation |
 | NO 🔒 | Navigating Officer | codebase research, read-only (`Explore`) |
@@ -80,26 +64,13 @@ Thresholds and procedure: `references/damage-control/hull-integrity.md`.
 | LOGO | Logistics Officer | docs and dependencies |
 | COX 🔒 | Coxswain | standards review, read-only (`Explore`) |
 
-Crew sizing and ship names: `references/crew-roles.md`. Marines: `references/royal-marines.md`.
-
-## Script Aliases
-
-Expand before running; shell state does not persist between tool calls.
-
-| Alias | Command |
-|---|---|
-| ND | `python3 .claude/skills/nelson/scripts/nelson-data.py` |
-| NP | `python3 .claude/skills/nelson/scripts/nelson-phase.py` |
-| NCS | `python3 .claude/skills/nelson/scripts/nelson_conflict_scan.py` |
-
-Plugin install path: `${CLAUDE_PLUGIN_ROOT}/skills/nelson/scripts/`. Global install: `~/.claude/skills/nelson/scripts/`. `{mission-dir}` is the path printed by `ND init`.
+Sizing, ship names, marines, models: `references/squadron.md`.
 
 ## Operators
 
 | Symbol | Meaning |
 |---|---|
 | → | then, results in |
-| ⟶ | phase transition |
 | ∧ ∨ ¬ | and, or, not |
 | ∀ ∃ ∄ | for each, exists, none |
 | ? | condition ("if") |
@@ -119,12 +90,12 @@ Plugin install path: `${CLAUDE_PLUGIN_ROOT}/skills/nelson/scripts/`. Global inst
 
 ```
 .nelson/
-  .active-{SESSION_ID}              session marker
-  missions/{YYYY-MM-DD_HHMMSS}_{SESSION_ID}/
-    sailing-orders.json  battle-plan.json  mission-log.json  fleet-status.json
-    estimate.md  battle-plan.md  quarterdeck-report.md  captains-log.md
-    damage-reports/{ship}.json    turnover-briefs/
-  memory/patterns.json  standing-order-stats.json
+  memory.md                       cross-mission patterns: adopt, avoid, recurring Φ; appended at Ω₈, read at Ω₁
+  missions/{YYYY-MM-DD_HHMM}-{slug}/
+    battle-plan.md                sailing orders, Standing Order Check, task briefs, formation (Ω₅; owners updated as they change)
+    estimate.md                   the Estimate, one H2 per question (~)
+    quarterdeck-report.md         latest checkpoint; history rotates to quarterdeck-report-N.md
+    captains-log.md               Ω₈; its presence marks the mission complete
 ```
 
-Schemas and event types: `references/structured-data.md`.
+`.nelson/` is git-ignored by default; un-ignore `memory.md` to share learned patterns with a team.
